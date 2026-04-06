@@ -24,7 +24,7 @@ Use this skill when the Codanna binary may be missing from the machine and you w
 
 ## Notes
 
-- The installer script prefers Codanna's official install script first, then falls back to Homebrew, Cargo, and Nix.
+- On macOS, the installer script prefers Homebrew first. On other platforms, it falls back through the official installer, Homebrew, Cargo, and Nix.
 - The installer may leave `codanna` installed in `~/.local/bin` or the plugin-local `.local/bin` without changing the user's global shell configuration.
 - This skill installs the binary only. Project initialization and index creation belong to the `codanna-init` skill.
 - The plugin launcher only starts Codanna when the current project already has `.codanna/settings.toml` and a non-empty `.codanna/index/`.

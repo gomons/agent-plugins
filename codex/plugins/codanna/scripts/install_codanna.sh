@@ -14,6 +14,10 @@ have_codanna() {
   command -v codanna >/dev/null 2>&1
 }
 
+is_macos() {
+  [ "$(uname -s)" = "Darwin" ]
+}
+
 show_help() {
   cat <<'EOF'
 Usage: install_codanna.sh [--check]
@@ -57,6 +61,18 @@ mkdir -p "$LOCAL_BIN_DIR"
 
 echo "Codanna is not installed. Attempting installation..." >&2
 
+if is_macos && command -v brew >/dev/null 2>&1; then
+  echo "Trying Homebrew installation (default on macOS)" >&2
+  if brew list codanna >/dev/null 2>&1 || brew install codanna; then
+    refresh_path
+  fi
+fi
+
+if have_codanna; then
+  codanna --version
+  exit 0
+fi
+
 if command -v curl >/dev/null 2>&1; then
   echo "Trying official installer from https://install.codanna.sh" >&2
   if curl -fsSL --proto '=https' --tlsv1.2 https://install.codanna.sh | sh; then
@@ -69,7 +85,7 @@ if have_codanna; then
   exit 0
 fi
 
-if command -v brew >/dev/null 2>&1; then
+if ! is_macos && command -v brew >/dev/null 2>&1; then
   echo "Trying Homebrew installation" >&2
   if brew list codanna >/dev/null 2>&1 || brew install codanna; then
     refresh_path
@@ -109,8 +125,8 @@ cat >&2 <<'EOF'
 Unable to install Codanna automatically.
 
 Supported automatic paths:
-  1. Official installer: curl -fsSL https://install.codanna.sh | sh
-  2. Homebrew: brew install codanna
+  1. Homebrew on macOS: brew install codanna
+  2. Official installer: curl -fsSL https://install.codanna.sh | sh
   3. Cargo: cargo install codanna --locked
   4. Nix: nix profile install github:bartolli/codanna
 
