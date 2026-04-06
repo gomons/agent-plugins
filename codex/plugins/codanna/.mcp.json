@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "codanna": {
+      "command": "./scripts/launch_codanna.sh",
+      "args": [
+        "serve",
+        "--watch"
+      ],
+      "note": "Wraps Codanna's official stdio launch command with a local bootstrap script. The launcher fails fast with a clear error when the current project does not already have a Codanna index, otherwise it refreshes that index with `codanna index` and then runs `codanna serve --watch`."
+    }
+  }
+}
