@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "codex"
+      ],
+      "note": "Official Codex launch command from Serena docs. Requires `uvx`; after startup, activate the current project in Serena."
+    }
+  }
+}
