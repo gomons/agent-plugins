@@ -1,3 +1,8 @@
+---
+name: "codanna-install"
+description: "Install or verify the Codanna binary on the current machine and confirm which executable the plugin launcher will use."
+---
+
 # Codanna Install
 
 Use this skill when the Codanna binary may be missing from the machine and you want to install or verify it.

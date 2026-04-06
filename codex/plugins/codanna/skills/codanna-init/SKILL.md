@@ -1,3 +1,8 @@
+---
+name: "codanna-init"
+description: "Initialize the current repository for Codanna, build the first index, and verify that the MCP server can start."
+---
+
 # Codanna Init
 
 Use this skill when the current repository should be prepared for Codanna so the MCP server can start successfully.

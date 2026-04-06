@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "codanna": {
-      "command": "./scripts/launch_codanna.sh",
+      "command": "sh",
       "args": [
-        "serve",
-        "--watch"
+        "-lc",
+        "set -eu\nfor candidate in \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/gomons-codex-plugins/codanna/local/scripts/launch_codanna.sh\" \"$HOME/.codex/plugins/cache/gomons-codex-plugins/codanna/local/scripts/launch_codanna.sh\"\ndo\n  if [ -x \"$candidate\" ]; then\n    exec \"$candidate\" serve --watch\n  fi\ndone\n\necho \"Unable to locate codanna launcher under the Codex plugin cache. Reinstall the plugin and try again.\" >&2\nexit 1"
       ],
-      "note": "Wraps Codanna's official stdio launch command with a local bootstrap script. The launcher fails fast with a clear error when the current project does not already have a Codanna index, otherwise it refreshes that index with `codanna index` and then runs `codanna serve --watch`."
+      "note": "Wraps Codanna's official stdio launch command with a local bootstrap script resolved from the Codex plugin cache. The launcher fails fast with a clear error when the current project does not already have a Codanna index, otherwise it refreshes that index with `codanna index` and then runs `codanna serve --watch`."
     }
   }
 }
