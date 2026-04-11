@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "Local Codex wrapper for the official Codanna MCP server.",
   "author": {
-    "name": "gomons-codex-plugins",
-    "email": "",
+    "name": "Siarhei Homan",
+    "email": "gomons@gmail.com",
     "url": ""
   },
   "homepage": "https://docs.codanna.sh/",
@@ -22,7 +22,7 @@
     "displayName": "Codanna",
     "shortDescription": "Code intelligence for Codex via Codanna MCP.",
     "longDescription": "Local Codex wrapper that starts the official Codanna MCP server so Codex can use semantic code search, relationship tracing, and indexed documentation retrieval.",
-    "developerName": "gomons-codex-plugins",
+    "developerName": "bartolli",
     "category": "Developer Tools",
     "capabilities": [
       "Interactive",

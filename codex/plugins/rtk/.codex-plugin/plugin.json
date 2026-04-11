@@ -1,0 +1,40 @@
+{
+  "name": "rtk",
+  "version": "0.1.0",
+  "description": "Local Codex wrapper for installing and maintaining Rust Token Killer.",
+  "author": {
+    "name": "Siarhei Homan",
+    "email": "gomons@gmail.com",
+    "url": ""
+  },
+  "homepage": "https://www.rtk-ai.app/",
+  "repository": "https://github.com/rtk-ai/rtk",
+  "license": "MIT",
+  "keywords": [
+    "rtk",
+    "rust-token-killer",
+    "codex",
+    "cli"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RTK",
+    "shortDescription": "Install or uninstall Rust Token Killer for Codex.",
+    "longDescription": "Local Codex wrapper that installs, removes, and re-applies Rust Token Killer's global Codex integration consistently across machines while preserving RTK's upstream project links.",
+    "developerName": "rtk-ai",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.rtk-ai.app/",
+    "privacyPolicyURL": "https://github.com/rtk-ai/rtk",
+    "termsOfServiceURL": "https://github.com/rtk-ai/rtk",
+    "defaultPrompt": [
+      "Use the rtk skill with mode install to install RTK for Codex on this machine.",
+      "Use the rtk skill with mode uninstall to remove RTK and clean up Codex integration files."
+    ],
+    "brandColor": "#166534"
+  }
+}

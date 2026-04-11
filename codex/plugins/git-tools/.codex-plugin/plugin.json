@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "description": "Small Git workflow helpers for Codex.",
   "author": {
-    "name": "OpenAI",
-    "email": "",
-    "url": "https://openai.com"
+    "name": "Siarhei Homan",
+    "email": "gomons@gmail.com",
+    "url": ""
   },
   "license": "MIT",
   "interface": {
     "displayName": "Git Tools",
     "shortDescription": "Git helper skills for local workflows.",
     "longDescription": "Provides small focused skills for local Git workflows, including creating worktrees from the current branch.",
-    "developerName": "OpenAI",
+    "developerName": "Siarhei Homan",
     "category": "Developer Tools",
     "capabilities": [
       "Interactive",
