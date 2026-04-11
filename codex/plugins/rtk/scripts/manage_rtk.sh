@@ -3,13 +3,11 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 <install|uninstall>" >&2
+  echo "Usage: $0 <install|deinit|uninstall>" >&2
   exit 1
 }
 
-RTK_BLOCK_START='<!-- gomons-codex-plugins:rtk:start -->'
 RTK_BLOCK_REF='@RTK.md'
-RTK_BLOCK_END='<!-- gomons-codex-plugins:rtk:end -->'
 
 resolve_rtk_bin() {
   local candidate
@@ -62,10 +60,39 @@ install_with_cargo() {
   cargo install --git https://github.com/rtk-ai/rtk
 }
 
+deinit_codex_integration() {
+  local rtk_bin
+
+  if ! rtk_bin="$(resolve_rtk_bin)"; then
+    echo "RTK is not installed, so Codex integration cannot be deinitialized through RTK." >&2
+    exit 1
+  fi
+
+  echo "Using RTK binary: $rtk_bin"
+  "$rtk_bin" --version
+
+  echo "Deinitializing RTK for Codex without removing the RTK binary..."
+  if ! "$rtk_bin" init -g --codex --uninstall; then
+    if ! "$rtk_bin" init --global --codex --uninstall; then
+      echo "Failed to deinitialize RTK for Codex." >&2
+      exit 1
+    fi
+  fi
+
+  echo "Verified RTK deinit command:"
+  echo "  $rtk_bin init -g --codex --show"
+  "$rtk_bin" init -g --codex --show || true
+
+  ensure_codex_deinitialized
+
+  if command -v rtk >/dev/null 2>&1; then
+    echo "RTK binary remains installed at: $(command -v rtk)"
+  fi
+}
+
 ensure_codex_integration() {
   local agents_file="$HOME/.codex/AGENTS.md"
   local rtk_file="$HOME/.codex/RTK.md"
-  local block_file
 
   if [[ ! -f "$rtk_file" ]]; then
     echo "RTK init completed, but $rtk_file was not created." >&2
@@ -77,71 +104,25 @@ ensure_codex_integration() {
     return 1
   fi
 
-  block_file="$(mktemp)"
-  cat > "$block_file" <<EOF
-$RTK_BLOCK_START
-$RTK_BLOCK_REF
-$RTK_BLOCK_END
-EOF
-
-  if ! grep -Fqx "$RTK_BLOCK_START" "$agents_file" || \
-     ! grep -Fqx "$RTK_BLOCK_REF" "$agents_file" || \
-     ! grep -Fqx "$RTK_BLOCK_END" "$agents_file"; then
-    rm -f "$block_file"
-    echo "$agents_file exists, but the managed RTK block is incomplete." >&2
+  if ! grep -Fq "$RTK_BLOCK_REF" "$agents_file"; then
+    echo "$agents_file exists, but it does not reference RTK.md after RTK init." >&2
     return 1
   fi
-
-  if ! diff -u <(grep -A2 -F "$RTK_BLOCK_START" "$agents_file" | head -n 3) "$block_file" >/dev/null 2>&1; then
-    rm -f "$block_file"
-    echo "$agents_file exists, but the managed RTK block does not match the expected content." >&2
-    return 1
-  fi
-
-  rm -f "$block_file"
 }
 
-rewrite_agents_with_managed_block() {
+ensure_codex_deinitialized() {
   local agents_file="$HOME/.codex/AGENTS.md"
-  local tmp_file
-  local clean_file
+  local rtk_file="$HOME/.codex/RTK.md"
 
-  mkdir -p "$(dirname "$agents_file")"
-  [[ -f "$agents_file" ]] || : > "$agents_file"
+  if [[ -f "$rtk_file" ]]; then
+    echo "RTK deinit completed, but $rtk_file still exists." >&2
+    return 1
+  fi
 
-  tmp_file="$(mktemp)"
-  awk -v start="$RTK_BLOCK_START" -v end="$RTK_BLOCK_END" '
-    $0 == start { skip=1; next }
-    $0 == end { skip=0; next }
-    skip != 1 { print }
-  ' "$agents_file" > "$tmp_file"
-
-  clean_file="$(mktemp)"
-  awk '
-    { lines[NR] = $0 }
-    END {
-      last = NR
-      while (last > 0 && lines[last] ~ /^[[:space:]]*$/) {
-        last--
-      }
-      for (i = 1; i <= last; i++) {
-        print lines[i]
-      }
-    }
-  ' "$tmp_file" > "$clean_file"
-
-  {
-    cat "$clean_file"
-    if [[ -s "$clean_file" ]]; then
-      printf '\n'
-    fi
-    printf '%s\n' "$RTK_BLOCK_START"
-    printf '%s\n' "$RTK_BLOCK_REF"
-    printf '%s\n' "$RTK_BLOCK_END"
-  } > "$agents_file"
-
-  rm -f "$tmp_file"
-  rm -f "$clean_file"
+  if [[ -f "$agents_file" ]] && grep -Fq "$RTK_BLOCK_REF" "$agents_file"; then
+    echo "RTK deinit completed, but $agents_file still references RTK.md." >&2
+    return 1
+  fi
 }
 
 install_rtk() {
@@ -177,8 +158,11 @@ install_rtk() {
     fi
   fi
 
-  rewrite_agents_with_managed_block
   ensure_codex_integration
+
+  echo "Verified RTK init command:"
+  echo "  $rtk_bin init -g --codex --show"
+  "$rtk_bin" init -g --codex --show || true
 
   echo "RTK Codex integration status:"
   if [[ -f "$HOME/.codex/RTK.md" ]]; then
@@ -194,28 +178,10 @@ install_rtk() {
   fi
 }
 
-remove_rtk_reference_from_agents() {
-  local agents_file="$HOME/.codex/AGENTS.md"
-  local tmp_file
-
-  [[ -f "$agents_file" ]] || return 0
-
-  tmp_file="$(mktemp)"
-  awk -v start="$RTK_BLOCK_START" -v end="$RTK_BLOCK_END" '
-    $0 == start { skip=1; next }
-    $0 == end { skip=0; next }
-    skip != 1 { print }
-  ' "$agents_file" > "$tmp_file"
-
-  if cmp -s "$tmp_file" "$agents_file"; then
-    rm -f "$tmp_file"
-    return 0
-  fi
-
-  mv "$tmp_file" "$agents_file"
-}
-
 uninstall_rtk() {
+  echo "Warning: this removes the RTK CLI from the machine."
+  echo "Other agents or tools on this machine may still rely on it."
+
   if command -v brew >/dev/null 2>&1 && brew list --formula rtk >/dev/null 2>&1; then
     echo "Removing RTK installed with Homebrew..."
     brew uninstall rtk
@@ -229,8 +195,6 @@ uninstall_rtk() {
     rm -f "$HOME/.codex/RTK.md"
     echo "Removed $HOME/.codex/RTK.md"
   fi
-
-  remove_rtk_reference_from_agents
 
   if command -v rtk >/dev/null 2>&1; then
     echo "RTK binary still resolves at: $(command -v rtk)"
@@ -246,6 +210,9 @@ main() {
   case "$1" in
     install)
       install_rtk
+      ;;
+    deinit)
+      deinit_codex_integration
       ;;
     uninstall)
       uninstall_rtk

@@ -19,8 +19,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "RTK",
-    "shortDescription": "Install or uninstall Rust Token Killer for Codex.",
-    "longDescription": "Local Codex wrapper that installs, removes, and re-applies Rust Token Killer's global Codex integration consistently across machines while preserving RTK's upstream project links.",
+    "shortDescription": "Install RTK, deinit Codex integration, or uninstall the RTK CLI.",
+    "longDescription": "Local Codex wrapper that installs RTK, deinitializes only its Codex integration when requested, or uninstalls the RTK CLI from the machine while preserving RTK's upstream project links.",
     "developerName": "rtk-ai",
     "category": "Developer Tools",
     "capabilities": [
@@ -32,8 +32,9 @@
     "privacyPolicyURL": "https://github.com/rtk-ai/rtk",
     "termsOfServiceURL": "https://github.com/rtk-ai/rtk",
     "defaultPrompt": [
-      "Use the rtk skill with mode install to install RTK for Codex on this machine.",
-      "Use the rtk skill with mode uninstall to remove RTK and clean up Codex integration files."
+      "Use the rtk-install skill to install RTK for Codex on this machine, run the global Codex init step `rtk init -g --codex`, and verify it with `rtk init -g --codex --show`.",
+      "Use the rtk-deinit skill to remove only RTK's Codex integration while keeping the RTK CLI installed.",
+      "Use the rtk-uninstall skill to remove the RTK CLI from the machine and warn that other agents may still rely on it."
     ],
     "brandColor": "#166534"
   }
