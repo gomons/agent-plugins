@@ -18,11 +18,11 @@ Use this skill when RTK should stay installed on the machine, but its Codex inte
    `"$RTK_BIN" --version`
    `"$RTK_BIN" init -g --codex --show`
    `test ! -f "$HOME/.codex/RTK.md"`
-   `test ! -f "$HOME/.codex/AGENTS.md" || ! grep -q "@RTK.md" "$HOME/.codex/AGENTS.md"`
+   `test ! -f "$HOME/.codex/AGENTS.md" || (! grep -Fxq '@RTK.md' "$HOME/.codex/AGENTS.md" && ! grep -Fxq "@$HOME/.codex/RTK.md" "$HOME/.codex/AGENTS.md" && ! grep -Fq 'RTK.md' "$HOME/.codex/AGENTS.md")`
 4. The RTK CLI should still be installed after deinit.
 
 ## Notes
 
 - This mode is for removing only Codex integration, not the RTK binary itself.
 - RTK owns the integration state in `~/.codex`, so the plugin does not rewrite `AGENTS.md`.
-- The plugin validates deinit by checking that `~/.codex/RTK.md` is gone and that `~/.codex/AGENTS.md` no longer references `@RTK.md`.
+- The plugin validates deinit by checking that `~/.codex/RTK.md` is gone and reporting whether `~/.codex/AGENTS.md` still contains any RTK reference forms: `@RTK.md`, `@~/.codex/RTK.md`, or a softer `RTK.md` match.

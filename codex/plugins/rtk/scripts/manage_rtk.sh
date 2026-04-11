@@ -7,8 +7,6 @@ usage() {
   exit 1
 }
 
-RTK_BLOCK_REF='@RTK.md'
-
 resolve_rtk_bin() {
   local candidate
 
@@ -31,6 +29,37 @@ resolve_rtk_bin() {
   done
 
   return 1
+}
+
+report_agents_rtk_references() {
+  local agents_file="$1"
+  local rtk_file="$2"
+  local short_ref='@RTK.md'
+  local path_ref="@${rtk_file}"
+  local found=1
+
+  if grep -Fxq "$short_ref" "$agents_file"; then
+    echo "Found RTK AGENTS.md reference form: $short_ref"
+    found=0
+  else
+    echo "RTK AGENTS.md reference form not found: $short_ref"
+  fi
+
+  if grep -Fxq "$path_ref" "$agents_file"; then
+    echo "Found RTK AGENTS.md reference form: $path_ref"
+    found=0
+  else
+    echo "RTK AGENTS.md reference form not found: $path_ref"
+  fi
+
+  if grep -Fq 'RTK.md' "$agents_file"; then
+    echo "Found RTK AGENTS.md reference form: RTK.md"
+    found=0
+  else
+    echo "RTK AGENTS.md reference form not found: RTK.md"
+  fi
+
+  return "$found"
 }
 
 install_with_brew() {
@@ -104,8 +133,8 @@ ensure_codex_integration() {
     return 1
   fi
 
-  if ! grep -Fq "$RTK_BLOCK_REF" "$agents_file"; then
-    echo "$agents_file exists, but it does not reference RTK.md after RTK init." >&2
+  if ! report_agents_rtk_references "$agents_file" "$rtk_file"; then
+    echo "$agents_file exists, but no RTK reference form was found after RTK init." >&2
     return 1
   fi
 }
@@ -119,9 +148,13 @@ ensure_codex_deinitialized() {
     return 1
   fi
 
-  if [[ -f "$agents_file" ]] && grep -Fq "$RTK_BLOCK_REF" "$agents_file"; then
-    echo "RTK deinit completed, but $agents_file still references RTK.md." >&2
-    return 1
+  if [[ -f "$agents_file" ]]; then
+    if report_agents_rtk_references "$agents_file" "$rtk_file"; then
+      echo "RTK deinit completed and no RTK reference forms remain in $agents_file."
+    else
+      echo "RTK deinit completed, but $agents_file still contains an RTK reference form." >&2
+      return 1
+    fi
   fi
 }
 
