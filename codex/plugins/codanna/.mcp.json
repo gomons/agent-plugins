@@ -4,9 +4,9 @@
       "command": "sh",
       "args": [
         "-lc",
-        "set -eu\nfor candidate in \"${CODEX_HOME:-$HOME/.codex}/plugins/cache/gomons-codex-plugins/codanna/local/scripts/launch_codanna.sh\" \"$HOME/.codex/plugins/cache/gomons-codex-plugins/codanna/local/scripts/launch_codanna.sh\"\ndo\n  if [ -x \"$candidate\" ]; then\n    exec \"$candidate\" serve --watch\n  fi\ndone\n\necho \"Unable to locate codanna launcher under the Codex plugin cache. Reinstall the plugin and try again.\" >&2\nexit 1"
+        "set -eu\nPATH=\"/opt/homebrew/bin:$PATH\"\nPROJECT_DIR=$(pwd)\nPROJECT_SETTINGS=\"$PROJECT_DIR/.codanna/settings.toml\"\nPROJECT_INDEX_DIR=\"$PROJECT_DIR/.codanna/index\"\n\nif ! command -v codanna >/dev/null 2>&1; then\n  echo \"Codanna is not installed. Install it with 'brew install codanna'.\" >&2\n  exit 1\nfi\n\nif [ ! -f \"$PROJECT_SETTINGS\" ] || [ ! -d \"$PROJECT_INDEX_DIR\" ] || ! find \"$PROJECT_INDEX_DIR\" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then\n  echo \"Codanna is not initialized for this project: run 'codanna init' and 'codanna index .' in $PROJECT_DIR first.\" >&2\n  exit 1\nfi\n\ncodanna index . >/dev/null\nexec codanna serve --watch"
       ],
-      "note": "Wraps Codanna's official stdio launch command with a local bootstrap script resolved from the Codex plugin cache. The launcher fails fast with a clear error when the current project does not already have a Codanna index, otherwise it refreshes that index with `codanna index` and then runs `codanna serve --watch`."
+      "note": "Apple Silicon macOS-only stdio launcher. Requires a globally installed Homebrew `codanna` binary in `/opt/homebrew/bin`, validates the current project's `.codanna` index, refreshes it, and then runs `codanna serve --watch`."
     }
   }
 }

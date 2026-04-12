@@ -16,7 +16,7 @@ Use this skill when the Codanna binary may be missing from the machine and you w
 ## Workflow
 
 1. From the plugin root, run `./scripts/install_codanna.sh`.
-2. In the same shell, resolve the executable with `command -v codanna` after running the installer. The installer script extends `PATH` for that shell to include plugin-local and user-local install locations such as `~/.local/bin`.
+2. In the same shell, resolve the executable with `command -v codanna` after running the installer. The installer script expects the global Homebrew binary to resolve from `/opt/homebrew/bin`.
 3. Verify installation with the resolved executable:
    `CODANNA_BIN="$(command -v codanna)"`
    `"$CODANNA_BIN" --version`
@@ -24,8 +24,8 @@ Use this skill when the Codanna binary may be missing from the machine and you w
 
 ## Notes
 
-- On macOS, the installer script prefers Homebrew first. On other platforms, it falls back through the official installer, Homebrew, Cargo, and Nix.
-- The installer may leave `codanna` installed in `~/.local/bin` or the plugin-local `.local/bin` without changing the user's global shell configuration.
+- This plugin is Apple Silicon macOS-only and installs Codanna through Homebrew.
+- The installer expects `codanna` to resolve globally from `/opt/homebrew/bin`.
 - This skill installs the binary only. Project initialization and index creation belong to the `codanna-init` skill.
 - The plugin launcher only starts Codanna when the current project already has `.codanna/settings.toml` and a non-empty `.codanna/index/`.
 - When that index exists, the launcher refreshes it with `codanna index` before starting the MCP server.

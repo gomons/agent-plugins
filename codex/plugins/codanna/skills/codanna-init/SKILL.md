@@ -18,7 +18,7 @@ Use this skill when the current repository should be prepared for Codanna so the
 ## Workflow
 
 1. If `codanna` is missing, run `./scripts/install_codanna.sh` from the plugin root first.
-2. In the same shell, resolve the executable with `command -v codanna`. The installer script extends `PATH` for that shell to include plugin-local and user-local install locations such as `~/.local/bin`.
+2. In the same shell, resolve the executable with `command -v codanna`. The installer script expects the global Homebrew binary to resolve from `/opt/homebrew/bin`.
 3. Verify installation with the resolved executable:
    `CODANNA_BIN="$(command -v codanna)"`
    `"$CODANNA_BIN" --version`
@@ -35,6 +35,7 @@ Use this skill when the current repository should be prepared for Codanna so the
 ## Notes
 
 - This skill is for project bootstrap, not binary installation alone.
+- This plugin is Apple Silicon macOS-only and expects `codanna` to be installed globally with Homebrew in `/opt/homebrew/bin`.
 - Do not assume the user's shell already resolves `codanna`; prefer the resolved `CODANNA_BIN` path from the installation shell.
 - `codanna index .` should build both the symbol index and the semantic embedding index when the project contains supported, indexable content.
 - If `get_index_info` reports `Embeddings: 0`, do not claim semantic search is ready. Call out the reason when it is visible, for example an empty code index, missing model assets, or unsupported project content.

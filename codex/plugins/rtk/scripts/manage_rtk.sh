@@ -16,11 +16,7 @@ resolve_rtk_bin() {
   fi
 
   for candidate in \
-    "$HOME/.local/bin/rtk" \
-    "$HOME/.cargo/bin/rtk" \
-    "/opt/homebrew/bin/rtk" \
-    "/usr/local/bin/rtk" \
-    "/home/linuxbrew/.linuxbrew/bin/rtk"
+    "/opt/homebrew/bin/rtk"
   do
     if [[ -x "$candidate" ]]; then
       printf '%s\n' "$candidate"
@@ -63,30 +59,22 @@ report_agents_rtk_references() {
 }
 
 install_with_brew() {
+  if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo "RTK install script only supports macOS." >&2
+    return 1
+  fi
+
+  if [[ "$(uname -m)" != "arm64" ]]; then
+    echo "RTK install script only supports Apple Silicon Macs." >&2
+    return 1
+  fi
+
   if ! command -v brew >/dev/null 2>&1; then
     return 1
   fi
 
   echo "Installing RTK with Homebrew..."
   brew install rtk
-}
-
-install_with_official_script() {
-  if ! command -v curl >/dev/null 2>&1; then
-    return 1
-  fi
-
-  echo "Installing RTK with the official installer..."
-  curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
-}
-
-install_with_cargo() {
-  if ! command -v cargo >/dev/null 2>&1; then
-    return 1
-  fi
-
-  echo "Installing RTK with Cargo..."
-  cargo install --git https://github.com/rtk-ai/rtk
 }
 
 deinit_codex_integration() {
@@ -162,14 +150,15 @@ install_rtk() {
   local rtk_bin
 
   if ! rtk_bin="$(resolve_rtk_bin)"; then
+    if [[ "$(uname -s)" != "Darwin" || "$(uname -m)" != "arm64" ]]; then
+      echo "RTK plugin support is limited to Apple Silicon macOS." >&2
+      exit 1
+    fi
+
     if ! install_with_brew; then
-      if ! install_with_official_script; then
-        if ! install_with_cargo; then
-          echo "RTK is not installed and no supported installer is available." >&2
-          echo "Tried: Homebrew, official RTK installer via curl, Cargo." >&2
-          exit 1
-        fi
-      fi
+      echo "RTK is not installed and could not be installed with Homebrew." >&2
+      echo "Install it with 'brew install rtk' and try again." >&2
+      exit 1
     fi
 
     if ! rtk_bin="$(resolve_rtk_bin)"; then
@@ -212,16 +201,19 @@ install_rtk() {
 }
 
 uninstall_rtk() {
+  if [[ "$(uname -s)" != "Darwin" || "$(uname -m)" != "arm64" ]]; then
+    echo "RTK plugin support is limited to Apple Silicon macOS." >&2
+    exit 1
+  fi
+
   echo "Warning: this removes the RTK CLI from the machine."
   echo "Other agents or tools on this machine may still rely on it."
 
   if command -v brew >/dev/null 2>&1 && brew list --formula rtk >/dev/null 2>&1; then
     echo "Removing RTK installed with Homebrew..."
     brew uninstall rtk
-  elif command -v cargo >/dev/null 2>&1 && cargo uninstall rtk; then
-    echo "Removed RTK installed with Cargo."
   else
-    echo "RTK was not removed through brew or cargo."
+    echo "RTK was not removed through Homebrew."
   fi
 
   if [[ -f "$HOME/.codex/RTK.md" ]]; then

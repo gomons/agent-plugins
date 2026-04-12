@@ -1,12 +1,8 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-PLUGIN_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
-LOCAL_BIN_DIR="$PLUGIN_DIR/.local/bin"
-
 refresh_path() {
-  PATH="$LOCAL_BIN_DIR:$HOME/.local/bin:$HOME/.cargo/bin:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+  PATH="/opt/homebrew/bin:$PATH"
   export PATH
 }
 
@@ -14,15 +10,11 @@ have_codanna() {
   command -v codanna >/dev/null 2>&1
 }
 
-is_macos() {
-  [ "$(uname -s)" = "Darwin" ]
-}
-
 show_help() {
   cat <<'EOF'
 Usage: install_codanna.sh [--check]
 
-Installs Codanna using official installation paths when it is missing.
+Ensures the global Homebrew `codanna` binary is available on Apple Silicon macOS.
 
 Options:
   --check    Exit 0 if codanna is already available in PATH, 1 otherwise.
@@ -57,15 +49,25 @@ if have_codanna; then
   exit 0
 fi
 
-mkdir -p "$LOCAL_BIN_DIR"
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "install_codanna.sh only supports macOS." >&2
+  exit 1
+fi
 
-echo "Codanna is not installed. Attempting installation..." >&2
+if [ "$(uname -m)" != "arm64" ]; then
+  echo "install_codanna.sh only supports Apple Silicon Macs." >&2
+  exit 1
+fi
 
-if is_macos && command -v brew >/dev/null 2>&1; then
-  echo "Trying Homebrew installation (default on macOS)" >&2
-  if brew list codanna >/dev/null 2>&1 || brew install codanna; then
-    refresh_path
-  fi
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is required to install Codanna on this machine." >&2
+  exit 1
+fi
+
+echo "Codanna is not installed. Installing with Homebrew..." >&2
+
+if brew list codanna >/dev/null 2>&1 || brew install codanna; then
+  refresh_path
 fi
 
 if have_codanna; then
@@ -73,63 +75,5 @@ if have_codanna; then
   exit 0
 fi
 
-if command -v curl >/dev/null 2>&1; then
-  echo "Trying official installer from https://install.codanna.sh" >&2
-  if curl -fsSL --proto '=https' --tlsv1.2 https://install.codanna.sh | sh; then
-    refresh_path
-  fi
-fi
-
-if have_codanna; then
-  codanna --version
-  exit 0
-fi
-
-if ! is_macos && command -v brew >/dev/null 2>&1; then
-  echo "Trying Homebrew installation" >&2
-  if brew list codanna >/dev/null 2>&1 || brew install codanna; then
-    refresh_path
-  fi
-fi
-
-if have_codanna; then
-  codanna --version
-  exit 0
-fi
-
-if command -v cargo >/dev/null 2>&1; then
-  echo "Trying Cargo installation into plugin-local directory" >&2
-  if cargo install codanna --locked --root "$PLUGIN_DIR/.local"; then
-    refresh_path
-  fi
-fi
-
-if have_codanna; then
-  codanna --version
-  exit 0
-fi
-
-if command -v nix >/dev/null 2>&1; then
-  echo "Trying Nix profile installation" >&2
-  if nix profile install github:bartolli/codanna; then
-    refresh_path
-  fi
-fi
-
-if have_codanna; then
-  codanna --version
-  exit 0
-fi
-
-cat >&2 <<'EOF'
-Unable to install Codanna automatically.
-
-Supported automatic paths:
-  1. Homebrew on macOS: brew install codanna
-  2. Official installer: curl -fsSL https://install.codanna.sh | sh
-  3. Cargo: cargo install codanna --locked
-  4. Nix: nix profile install github:bartolli/codanna
-
-After installation, ensure `codanna` is available in PATH.
-EOF
+echo "Homebrew installation completed, but `codanna` is still not available in PATH." >&2
 exit 1

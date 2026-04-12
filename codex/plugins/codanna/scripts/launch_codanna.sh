@@ -1,16 +1,12 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-PLUGIN_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
-LOCAL_BIN_DIR="$PLUGIN_DIR/.local/bin"
-INSTALLER="$SCRIPT_DIR/install_codanna.sh"
 PROJECT_DIR=$(pwd)
 PROJECT_CODANNA_DIR="$PROJECT_DIR/.codanna"
 PROJECT_SETTINGS="$PROJECT_CODANNA_DIR/settings.toml"
 PROJECT_INDEX_DIR="$PROJECT_CODANNA_DIR/index"
 
-PATH="$LOCAL_BIN_DIR:$HOME/.local/bin:$HOME/.cargo/bin:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
+PATH="/opt/homebrew/bin:$PATH"
 export PATH
 
 has_existing_index() {
@@ -24,10 +20,19 @@ if ! has_existing_index; then
   exit 1
 fi
 
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "launch_codanna.sh only supports macOS." >&2
+  exit 1
+fi
+
+if [ "$(uname -m)" != "arm64" ]; then
+  echo "launch_codanna.sh only supports Apple Silicon Macs." >&2
+  exit 1
+fi
+
 if ! command -v codanna >/dev/null 2>&1; then
-  "$INSTALLER"
-  PATH="$LOCAL_BIN_DIR:$HOME/.local/bin:$HOME/.cargo/bin:/opt/homebrew/bin:/home/linuxbrew/.linuxbrew/bin:$PATH"
-  export PATH
+  echo "Codanna is not installed. Install it with 'brew install codanna'." >&2
+  exit 1
 fi
 
 echo "Codanna launcher: refreshing existing index in $PROJECT_DIR" >&2

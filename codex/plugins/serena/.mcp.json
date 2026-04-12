@@ -1,16 +1,12 @@
 {
   "mcpServers": {
     "serena": {
-      "command": "uvx",
+      "command": "sh",
       "args": [
-        "--from",
-        "git+https://github.com/oraios/serena",
-        "serena",
-        "start-mcp-server",
-        "--context",
-        "codex"
+        "-lc",
+        "set -eu\nPATH=\"/opt/homebrew/bin:$PATH\"\nif ! command -v serena >/dev/null 2>&1; then\n  echo \"Serena is not installed. Install it with Homebrew so the 'serena' binary is globally available.\" >&2\n  exit 1\nfi\nexec serena start-mcp-server --context codex"
       ],
-      "note": "Official Codex launch command from Serena docs. Requires `uvx`; after startup, activate the current project in Serena."
+      "note": "Apple Silicon macOS-only stdio launcher. Requires a globally installed Homebrew `serena` binary in `/opt/homebrew/bin`; after startup, activate the current project in Serena."
     }
   }
 }
