@@ -104,10 +104,10 @@ ensure_codex_deinitialized() {
 
   if [[ -f "$agents_file" ]]; then
     if report_agents_rtk_references "$agents_file" "$rtk_file"; then
-      echo "RTK deinit completed and no RTK reference forms remain in $agents_file."
-    else
       echo "RTK deinit completed, but $agents_file still contains an RTK reference form." >&2
       return 1
+    else
+      echo "RTK deinit completed and no RTK reference forms remain in $agents_file."
     fi
   fi
 }
