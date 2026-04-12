@@ -178,10 +178,8 @@ uninstall_rtk() {
     echo "RTK was not removed through Homebrew."
   fi
 
-  if [[ -f "$HOME/.codex/RTK.md" ]]; then
-    rm -f "$HOME/.codex/RTK.md"
-    echo "Removed $HOME/.codex/RTK.md"
-  fi
+  echo "RTK uninstall does not modify ~/.codex/RTK.md or ~/.codex/AGENTS.md."
+  echo "If you also want to remove Codex integration, run the RTK deinit flow first."
 
   if command -v rtk >/dev/null 2>&1; then
     echo "RTK binary still resolves at: $(command -v rtk)"
