@@ -4,9 +4,9 @@
       "command": "sh",
       "args": [
         "-lc",
-        "set -eu\nPATH=\"/opt/homebrew/bin:$PATH\"\nPROJECT_DIR=$(pwd)\nPROJECT_SETTINGS=\"$PROJECT_DIR/.codanna/settings.toml\"\nPROJECT_INDEX_DIR=\"$PROJECT_DIR/.codanna/index\"\n\nif ! command -v codanna >/dev/null 2>&1; then\n  echo \"Codanna is not installed. Install it with 'brew install codanna'.\" >&2\n  exit 1\nfi\n\nif [ ! -f \"$PROJECT_SETTINGS\" ] || [ ! -d \"$PROJECT_INDEX_DIR\" ] || ! find \"$PROJECT_INDEX_DIR\" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then\n  echo \"Codanna is not initialized for this project: run 'codanna init' and 'codanna index .' in $PROJECT_DIR first.\" >&2\n  exit 1\nfi\n\ncodanna index . >/dev/null\nexec codanna serve --watch"
+        "set -eu\nPATH=\"/opt/homebrew/bin:$PATH\"\nPROJECT_DIR=$(pwd)\nPROJECT_SETTINGS=\"$PROJECT_DIR/.codanna/settings.toml\"\nPROJECT_INDEX_DIR=\"$PROJECT_DIR/.codanna/index\"\n\nif ! command -v codanna >/dev/null 2>&1; then\n  echo \"Codanna is not installed. Run the 'codanna-install' skill to install the global codanna CLI for this machine.\" >&2\n  exit 1\nfi\n\nif [ ! -f \"$PROJECT_SETTINGS\" ] || [ ! -d \"$PROJECT_INDEX_DIR\" ] || ! find \"$PROJECT_INDEX_DIR\" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then\n  echo \"Codanna is not initialized for this project. Run the 'codanna-init' skill in $PROJECT_DIR to create .codanna and build the first index.\" >&2\n  exit 1\nfi\n\ncodanna index . >/dev/null\nexec codanna serve --watch"
       ],
-      "note": "Apple Silicon macOS-only stdio launcher. Requires a globally installed Homebrew `codanna` binary in `/opt/homebrew/bin`, validates the current project's `.codanna` index, refreshes it, and then runs `codanna serve --watch`."
+      "note": "Apple Silicon macOS-only stdio launcher. Requires a globally installed `codanna` CLI in `/opt/homebrew/bin`, validates the current project's `.codanna` index, refreshes it, and then runs `codanna serve --watch`. If the binary or project bootstrap is missing, follow the `codanna-install` or `codanna-init` skills."
     }
   }
 }

@@ -1,5 +1,5 @@
 ---
-name: "create-worktree"
+name: "git-create-worktree"
 description: "Create a git worktree in the repository root under `.worktree/<branch-name>` from the current branch. Use when the user wants a new worktree and provides or implies the target branch name."
 ---
 

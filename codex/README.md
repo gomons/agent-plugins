@@ -7,7 +7,8 @@ This subtree is a self-contained source of plugins for Codex.
 This plugin source currently supports macOS on Apple Silicon only.
 
 - The local plugins in this repository are designed and tested for macOS on Apple Silicon.
-- MCP-backed plugins expect their server binaries to be installed globally through Homebrew and available in `/opt/homebrew/bin`.
+- MCP-backed plugins expect their server binaries to be installed globally and available in `PATH`.
+- On this source tree today, `codanna` is installed via Homebrew into `/opt/homebrew/bin`, while `serena` is installed as a global CLI via `uv` and is typically resolved from `$HOME/.local/bin`.
 - Linux support is intentionally not implemented at the moment.
 
 ## Structure
