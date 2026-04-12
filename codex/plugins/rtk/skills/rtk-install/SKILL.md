@@ -19,11 +19,11 @@ Use this skill when Rust Token Killer should be installed or re-applied on the c
    `"$RTK_BIN" init -g --codex --show`
    `test -f "$HOME/.codex/RTK.md"`
    `test -f "$HOME/.codex/AGENTS.md"`
-   `grep -Fxq '@RTK.md' "$HOME/.codex/AGENTS.md" || grep -Fxq "@$HOME/.codex/RTK.md" "$HOME/.codex/AGENTS.md" || grep -Fq 'RTK.md' "$HOME/.codex/AGENTS.md"`
+   `grep -Fq 'RTK.md' "$HOME/.codex/AGENTS.md"`
 
 ## Notes
 
 - The official RTK flow integrates with Codex through files in `~/.codex`, not through an MCP server in this plugin.
 - The canonical manual init command for current RTK versions is `rtk init -g --codex`. Use `rtk init -g --codex --show` to inspect the resulting global Codex configuration.
 - This plugin is Apple Silicon macOS-only and installs RTK through Homebrew in `/opt/homebrew/bin`.
-- The install path tries multiple known init flag shapes, then validates that RTK created `~/.codex/RTK.md` and reports which RTK reference forms it finds in `~/.codex/AGENTS.md`: `@RTK.md`, `@~/.codex/RTK.md`, or a softer `RTK.md` match. It does not rewrite or normalize `AGENTS.md`.
+- The install path uses the current canonical RTK command shape only, then validates that RTK created `~/.codex/RTK.md` and that `~/.codex/AGENTS.md` contains an `RTK.md` reference.

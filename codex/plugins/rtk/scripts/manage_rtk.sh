@@ -8,54 +8,22 @@ usage() {
 }
 
 resolve_rtk_bin() {
-  local candidate
-
   if command -v rtk >/dev/null 2>&1; then
     command -v rtk
     return 0
   fi
 
-  for candidate in \
-    "/opt/homebrew/bin/rtk"
-  do
-    if [[ -x "$candidate" ]]; then
-      printf '%s\n' "$candidate"
-      return 0
-    fi
-  done
+  if [[ -x "/opt/homebrew/bin/rtk" ]]; then
+    printf '%s\n' "/opt/homebrew/bin/rtk"
+    return 0
+  fi
 
   return 1
 }
 
 report_agents_rtk_references() {
   local agents_file="$1"
-  local rtk_file="$2"
-  local short_ref='@RTK.md'
-  local path_ref="@${rtk_file}"
-  local found=1
-
-  if grep -Fxq "$short_ref" "$agents_file"; then
-    echo "Found RTK AGENTS.md reference form: $short_ref"
-    found=0
-  else
-    echo "RTK AGENTS.md reference form not found: $short_ref"
-  fi
-
-  if grep -Fxq "$path_ref" "$agents_file"; then
-    echo "Found RTK AGENTS.md reference form: $path_ref"
-    found=0
-  else
-    echo "RTK AGENTS.md reference form not found: $path_ref"
-  fi
-
-  if grep -Fq 'RTK.md' "$agents_file"; then
-    echo "Found RTK AGENTS.md reference form: RTK.md"
-    found=0
-  else
-    echo "RTK AGENTS.md reference form not found: RTK.md"
-  fi
-
-  return "$found"
+  grep -Fq 'RTK.md' "$agents_file"
 }
 
 install_with_brew() {
@@ -90,10 +58,8 @@ deinit_codex_integration() {
 
   echo "Deinitializing RTK for Codex without removing the RTK binary..."
   if ! "$rtk_bin" init -g --codex --uninstall; then
-    if ! "$rtk_bin" init --global --codex --uninstall; then
-      echo "Failed to deinitialize RTK for Codex." >&2
-      exit 1
-    fi
+    echo "Failed to deinitialize RTK for Codex." >&2
+    exit 1
   fi
 
   echo "Verified RTK deinit command:"
@@ -172,12 +138,8 @@ install_rtk() {
 
   echo "Activating RTK for Codex..."
   if ! "$rtk_bin" init -g --codex; then
-    if ! "$rtk_bin" init --global --codex; then
-      if ! "$rtk_bin" init --global; then
-        echo "Failed to initialize RTK for Codex." >&2
-        exit 1
-      fi
-    fi
+    echo "Failed to initialize RTK for Codex." >&2
+    exit 1
   fi
 
   ensure_codex_integration

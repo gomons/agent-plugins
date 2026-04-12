@@ -16,6 +16,7 @@
     "codex",
     "code-intelligence"
   ],
+  "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Serena",
@@ -32,6 +33,7 @@
     "privacyPolicyURL": "https://github.com/oraios/serena",
     "termsOfServiceURL": "https://github.com/oraios/serena",
     "defaultPrompt": [
+      "Install Serena if it is missing from this machine.",
       "Activate Serena for the current project.",
       "Use Serena to inspect code semantically.",
       "Use Serena editing tools for targeted refactors."

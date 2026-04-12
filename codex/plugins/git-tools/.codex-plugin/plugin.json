@@ -7,6 +7,7 @@
     "email": "gomons@gmail.com",
     "url": ""
   },
+  "skills": "./skills/",
   "license": "MIT",
   "interface": {
     "displayName": "Git Tools",
@@ -20,7 +21,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use the create-worktree skill to create a worktree for a new branch."
+      "Use the git-create-worktree skill to create a worktree for a new branch."
     ],
     "brandColor": "#0F766E"
   }
