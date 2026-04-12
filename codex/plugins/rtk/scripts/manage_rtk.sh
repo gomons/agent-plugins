@@ -18,6 +18,11 @@ resolve_rtk_bin() {
     return 0
   fi
 
+  if [[ -x "$HOME/.local/bin/rtk" ]]; then
+    printf '%s\n' "$HOME/.local/bin/rtk"
+    return 0
+  fi
+
   return 1
 }
 

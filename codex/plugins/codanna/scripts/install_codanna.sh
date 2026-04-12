@@ -2,7 +2,7 @@
 set -eu
 
 refresh_path() {
-  PATH="/opt/homebrew/bin:$PATH"
+  PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
   export PATH
 }
 
@@ -14,7 +14,7 @@ show_help() {
   cat <<'EOF'
 Usage: install_codanna.sh [--check]
 
-Ensures the global Homebrew `codanna` binary is available on Apple Silicon macOS.
+Ensures the global `codanna` binary is available on Apple Silicon macOS.
 
 Options:
   --check    Exit 0 if codanna is already available in PATH, 1 otherwise.
@@ -75,5 +75,5 @@ if have_codanna; then
   exit 0
 fi
 
-echo "Homebrew installation completed, but `codanna` is still not available in PATH." >&2
+echo "Homebrew installation completed, but `codanna` is still not available in /opt/homebrew/bin, ~/.local/bin, or PATH." >&2
 exit 1

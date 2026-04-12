@@ -22,6 +22,6 @@ Use this skill when the RTK CLI itself should be removed from the current machin
 ## Notes
 
 - The uninstall path removes the RTK CLI only when it was installed through Homebrew.
-- This plugin is Apple Silicon macOS-only and expects the RTK binary in `/opt/homebrew/bin`.
+- This plugin is Apple Silicon macOS-only and resolves the RTK binary from `/opt/homebrew/bin`, `~/.local/bin`, or the inherited `PATH`.
 - If the binary came from a manual download or another package manager, the script reports the remaining executable path instead of deleting it blindly.
 - The plugin does not edit `~/.codex/RTK.md` or `~/.codex/AGENTS.md` during uninstall. Use `rtk-deinit` if you want RTK itself to remove its Codex integration first.

@@ -25,5 +25,5 @@ Use this skill when Rust Token Killer should be installed or re-applied on the c
 
 - The official RTK flow integrates with Codex through files in `~/.codex`, not through an MCP server in this plugin.
 - The canonical manual init command for current RTK versions is `rtk init -g --codex`. Use `rtk init -g --codex --show` to inspect the resulting global Codex configuration.
-- This plugin is Apple Silicon macOS-only and installs RTK through Homebrew in `/opt/homebrew/bin`.
+- This plugin is Apple Silicon macOS-only and installs RTK through Homebrew by default, but the launcher also accepts a user-local binary in `~/.local/bin`.
 - The install path uses the current canonical RTK command shape only, then validates that RTK created `~/.codex/RTK.md` and that `~/.codex/AGENTS.md` contains an `RTK.md` reference.

@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-PATH="/opt/homebrew/bin:$PATH"
+PATH="/opt/homebrew/bin:$HOME/.local/bin:$PATH"
 export PATH
 
 show_help() {
