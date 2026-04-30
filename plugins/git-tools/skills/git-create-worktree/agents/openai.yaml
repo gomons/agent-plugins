@@ -1,7 +1,0 @@
-interface:
-  display_name: "Create Git Worktree"
-  short_description: "Create a git branch worktree in .worktree directory"
-  default_prompt: "Use $git-create-worktree to create a new git worktree in the repo's .worktree directory for a branch name I provide."
-
-policy:
-  allow_implicit_invocation: true

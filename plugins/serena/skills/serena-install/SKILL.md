@@ -18,7 +18,7 @@ Use this skill when the Serena CLI may be missing from the machine and the Seren
 1. From the skill directory, run `./install_serena.sh`.
 2. In the same shell, resolve the executable with `command -v serena`.
 3. Verify the CLI with `serena --help`.
-4. If the current project should be prepared for Serena usage in this Codex session, switch to `serena-init`.
+4. If the current project should be prepared for Serena usage in this agent session, switch to `serena-init`.
 
 ## Notes
 

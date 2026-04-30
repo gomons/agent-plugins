@@ -23,5 +23,5 @@ Use this skill when Serena is installed and the MCP server is available, but the
 
 ## Notes
 
-- This skill prepares the current repository for Serena usage in the current Codex session.
+- This skill prepares the current repository for Serena usage in the current agent session.
 - Unlike Codanna, Serena does not require a repository-local `.serena/` bootstrap directory here.
