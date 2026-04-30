@@ -100,6 +100,8 @@ generate_codex_marketplace() {
   mkdir -p "$out/.agents/plugins"
   rm -rf "$out/plugins"
 
+  cp marketplace/README.codex.md "$out/README.md"
+
   jq '
     . as $root
     | $root.platforms.codex
@@ -127,6 +129,8 @@ generate_claude_marketplace() {
   out=$1
   mkdir -p "$out/.claude-plugin"
   rm -rf "$out/plugins"
+
+  cp marketplace/README.claude.md "$out/README.md"
 
   entries='[]'
   for plugin in $PLUGINS; do
