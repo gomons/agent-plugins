@@ -4,8 +4,7 @@
     "version": "0.1.0",
     "author": {
       "name": "Siarhei Homan",
-      "email": "gomons@gmail.com",
-      "url": ""
+      "email": "gomons@gmail.com"
     },
     "homepage": "https://www.rtk-ai.app/",
     "repository": "https://github.com/rtk-ai/rtk",

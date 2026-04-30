@@ -18,6 +18,11 @@ validate:
 	@tmp=$$(mktemp -d); \
 	CODEX_OUT="$$tmp/codex" CLAUDE_OUT="$$tmp/claude" ./scripts/generate.sh all; \
 	for f in $$(find "$$tmp" -name '*.json' -type f); do jq empty "$$f"; done; \
+	jq -e '.name and .plugins and (.plugins | length > 0)' "$$tmp/codex/.agents/plugins/marketplace.json" >/dev/null; \
+	jq -e '.["$$schema"] and .name and .plugins and (.plugins | length > 0)' "$$tmp/claude/.claude-plugin/marketplace.json" >/dev/null; \
+	for f in $$(find "$$tmp" -name 'plugin.json' -type f); do \
+	  jq -e '.name and .version and .description and .skills' "$$f" >/dev/null; \
+	done; \
 	rm -rf "$$tmp"
 
 codex:

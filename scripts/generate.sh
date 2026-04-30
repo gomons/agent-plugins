@@ -25,7 +25,7 @@ plugin_manifest() {
 
   jq --arg platform "$platform" '
     def compact_object:
-      with_entries(select(.value != null));
+      with_entries(select(.value != null and .value != ""));
 
     def ordered_interface:
       {
