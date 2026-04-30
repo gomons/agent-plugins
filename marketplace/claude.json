@@ -1,0 +1,56 @@
+{
+  "name": "gomons-claude-plugins",
+  "interface": {
+    "displayName": "gomons-claude-plugins"
+  },
+  "plugins": [
+    {
+      "name": "rtk",
+      "source": {
+        "source": "local",
+        "path": "./plugins/rtk"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "codanna",
+      "source": {
+        "source": "local",
+        "path": "./plugins/codanna"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "serena",
+      "source": {
+        "source": "local",
+        "path": "./plugins/serena"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Developer Tools"
+    },
+    {
+      "name": "git-tools",
+      "source": {
+        "source": "local",
+        "path": "./plugins/git-tools"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

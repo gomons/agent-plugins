@@ -1,0 +1,39 @@
+{
+  "name": "rtk",
+  "version": "0.1.0",
+  "description": "Claude Code plugin for installing Rust Token Killer.",
+  "author": {
+    "name": "Siarhei Homan",
+    "email": "gomons@gmail.com",
+    "url": ""
+  },
+  "homepage": "https://www.rtk-ai.app/",
+  "repository": "https://github.com/rtk-ai/rtk",
+  "license": "MIT",
+  "keywords": [
+    "rtk",
+    "rust-token-killer",
+    "claude",
+    "cli"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RTK",
+    "shortDescription": "Install RTK and initialize its Claude Code integration.",
+    "longDescription": "Installs the RTK CLI and runs the global Claude Code init step so Claude Code can use RTK for token reduction.",
+    "developerName": "rtk-ai",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://www.rtk-ai.app/",
+    "privacyPolicyURL": "https://github.com/rtk-ai/rtk",
+    "termsOfServiceURL": "https://github.com/rtk-ai/rtk",
+    "defaultPrompt": [
+      "Use the rtk-install skill to install RTK for Claude Code on this machine, run the global init step `rtk init -g`, and verify that `~/.claude/RTK.md` was created."
+    ],
+    "brandColor": "#166534"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "sh",
+      "args": [
+        "-lc",
+        "set -eu\nPATH=\"/opt/homebrew/bin:$HOME/.local/bin:$PATH\"\nif ! command -v serena >/dev/null 2>&1; then\n  echo \"Serena is not installed. Run the 'serena-install' skill to install the global serena CLI for this machine.\" >&2\n  exit 1\nfi\nexec serena start-mcp-server --context claude-code --project-from-cwd"
+      ],
+      "note": "Apple Silicon macOS-only stdio launcher. Requires a globally installed `serena` CLI resolved from `/opt/homebrew/bin` or `$HOME/.local/bin`; after startup, use the `serena-init` skill to activate the current project in Serena."
+    }
+  }
+}

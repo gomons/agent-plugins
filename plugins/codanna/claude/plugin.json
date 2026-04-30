@@ -1,0 +1,44 @@
+{
+  "name": "codanna",
+  "version": "0.1.0",
+  "description": "Claude Code plugin for the official Codanna MCP server.",
+  "author": {
+    "name": "Siarhei Homan",
+    "email": "gomons@gmail.com",
+    "url": ""
+  },
+  "homepage": "https://docs.codanna.sh/",
+  "repository": "https://github.com/bartolli/codanna",
+  "license": "Apache-2.0",
+  "keywords": [
+    "mcp",
+    "codanna",
+    "claude",
+    "code-intelligence"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "Codanna",
+    "shortDescription": "Code intelligence for Claude Code via Codanna MCP.",
+    "longDescription": "Starts the official Codanna MCP server so Claude Code can use semantic code search, relationship tracing, and indexed documentation retrieval.",
+    "developerName": "bartolli",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://docs.codanna.sh/",
+    "privacyPolicyURL": "https://github.com/bartolli/codanna",
+    "termsOfServiceURL": "https://github.com/bartolli/codanna",
+    "defaultPrompt": [
+      "Activate Codanna for the current project.",
+      "Install Codanna if it is missing from this machine.",
+      "Initialize the current project for Codanna and create its first index when needed.",
+      "Use Codanna to search code semantically.",
+      "Use Codanna to trace calls, callers, and impact before edits."
+    ],
+    "brandColor": "#0F766E"
+  }
+}
