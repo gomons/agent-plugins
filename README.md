@@ -54,11 +54,9 @@ Claude Code output:
 
 | Command | Purpose |
 | --- | --- |
-| `make generate` | Generate both default output directories. |
-| `make codex` | Generate Codex output. |
-| `make claude` | Generate Claude Code output. |
-| `make validate` | Check source JSON, shell syntax, and generated JSON in temp dirs. |
-| `make all` | Generate and validate outputs. |
+| `make codex` | Validate sources and generate Codex output. |
+| `make claude` | Validate sources and generate Claude Code output. |
+| `make all` | Run both `codex` and `claude`. |
 | `make clean` | Remove local default outputs only. |
 
 Generate into external marketplace repositories:
@@ -83,7 +81,6 @@ Edit source files only:
 Then run:
 
 ```sh
-make validate
 make all
 ```
 
