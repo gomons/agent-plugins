@@ -1,8 +1,8 @@
-# Agent Plugins
+# Agent Plugins Source
 
-Local plugin marketplace for Codex and Claude Code.
+Source repository for Codex and Claude Code plugin marketplaces.
 
-The repository keeps generated manifests in git so plugins can be consumed directly. Maintainers edit source manifests, then regenerate the platform files with `jq`.
+This repo stores shared plugin sources. Generated marketplace repositories are written to output directories and are not tracked here.
 
 ## Plugins
 
@@ -19,28 +19,57 @@ The repository keeps generated manifests in git so plugins can be consumed direc
 - `rsync`
 - `bash`
 
-## Layout
+## Source Layout
 
-- `marketplace/source.json`: source for platform marketplace manifests.
-- `marketplace/{codex,claude}.json`: generated marketplace manifests.
-- `plugins/<plugin>/plugin.source.json`: source for platform plugin manifests.
-- `plugins/<plugin>/mcp.source.json`: source for platform MCP config, when needed.
-- `plugins/<plugin>/{codex,claude}/`: generated platform files.
+- `marketplace/source.json`: shared marketplace metadata and plugin list.
+- `plugins/<plugin>/plugin.source.json`: shared plugin manifest source.
+- `plugins/<plugin>/mcp.source.json`: MCP config source, when needed.
 - `plugins/<plugin>/skills/`: shipped skills.
-- `.codex-marketplace/`, `.claude-marketplace/`: local build outputs.
+- `scripts/generate.sh`: marketplace generator.
+
+Generated files are ignored in this repository.
+
+## Output Layout
+
+Default outputs:
+
+- `.codex-marketplace/`
+- `.claude-marketplace/`
+
+Codex output:
+
+- `.agents/plugins/marketplace.json`
+- `plugins/<plugin>/.codex-plugin/plugin.json`
+- `plugins/<plugin>/.mcp.json`
+- `plugins/<plugin>/skills/**`
+
+Claude Code output:
+
+- `.claude-plugin/marketplace.json`
+- `plugins/<plugin>/.claude-plugin/plugin.json`
+- `plugins/<plugin>/.mcp.json`
+- `plugins/<plugin>/skills/**`
 
 ## Commands
 
 | Command | Purpose |
 | --- | --- |
-| `make generate` | Regenerate JSON manifests. |
-| `make validate` | Check JSON, shell syntax, and generator idempotence. |
-| `make codex` | Build `.codex-marketplace/`. |
-| `make claude` | Build `.claude-marketplace/`. |
-| `make all` | Run generate, validate, and both builds. |
-| `make clean` | Remove build outputs. |
+| `make generate` | Generate both default output directories. |
+| `make codex` | Generate Codex output. |
+| `make claude` | Generate Claude Code output. |
+| `make validate` | Check source JSON, shell syntax, and generated JSON in temp dirs. |
+| `make all` | Generate and validate outputs. |
+| `make clean` | Remove local default outputs only. |
 
-Use `make all` for the normal full check. Use `make clean && make all` when you want fresh output directories.
+Generate into external marketplace repositories:
+
+```sh
+make codex CODEX_OUT=../codex-marketplace
+make claude CLAUDE_OUT=../claude-marketplace
+make all CODEX_OUT=../codex-marketplace CLAUDE_OUT=../claude-marketplace
+```
+
+`make all` does not delete output repository roots. The generator refreshes `plugins/` inside each output and rewrites the marketplace manifest, preserving files such as `.git`.
 
 ## Editing
 
@@ -51,32 +80,11 @@ Edit source files only:
 - `plugins/<plugin>/mcp.source.json`
 - `plugins/<plugin>/skills/**`
 
-Do not hand-edit generated files:
-
-- `marketplace/{codex,claude}.json`
-- `plugins/<plugin>/{codex,claude}/plugin.json`
-- `plugins/<plugin>/{codex,claude}/mcp.json`
-
-After changes:
+Then run:
 
 ```sh
-make generate
 make validate
-git diff --check
+make all
 ```
 
-## Source Format
-
-`plugin.source.json` and `mcp.source.json` use:
-
-- `common`: shared fields.
-- `platforms.codex`: Codex overrides.
-- `platforms.claude`: Claude Code overrides.
-
-`scripts/generate.sh` handles paths and loops; `jq` handles JSON merging and formatting.
-
-## Notes
-
-- Build outputs are ignored by git.
-- Builds use `rsync --delete`, so stale output files are removed.
-- Generated manifests are tracked intentionally for direct consumption.
+Commit source changes here. Commit generated output in the separate Codex and Claude Code marketplace repositories.

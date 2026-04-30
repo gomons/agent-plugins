@@ -1,3 +1,7 @@
 .codex-marketplace/
 .claude-marketplace/
 .codex_plans/
+marketplace/codex.json
+marketplace/claude.json
+plugins/*/codex/
+plugins/*/claude/

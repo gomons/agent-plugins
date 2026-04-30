@@ -8,8 +8,11 @@
     },
     "claude": {
       "name": "gomons-claude-plugins",
-      "interface": {
-        "displayName": "gomons-claude-plugins"
+      "version": "0.1.0",
+      "description": "Developer tool plugins for Claude Code.",
+      "owner": {
+        "name": "Siarhei Homan",
+        "email": "gomons@gmail.com"
       }
     }
   },

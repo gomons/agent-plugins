@@ -6,43 +6,25 @@ BASH_FILES := plugins/rtk/skills/rtk-install/install_rtk.sh
 
 .PHONY: all generate validate codex claude clean
 
-all: generate validate codex claude
+all: generate validate
 
-generate:
-	./scripts/generate.sh
+generate: codex claude
 
 validate:
 	@command -v jq >/dev/null 2>&1 || { echo "jq is required"; exit 1; }
 	@for f in $(JSON_FILES); do jq empty "$$f"; done
 	@for f in $(SH_FILES); do sh -n "$$f"; done
 	@for f in $(BASH_FILES); do bash -n "$$f"; done
-	@before=$$(mktemp); after=$$(mktemp); \
-	git diff -- marketplace plugins > "$$before"; \
-	./scripts/generate.sh; \
-	git diff -- marketplace plugins > "$$after"; \
-	if ! cmp -s "$$before" "$$after"; then \
-		echo "Generated files are out of date. Run make generate."; \
-		diff -u "$$before" "$$after"; \
-		rm -f "$$before" "$$after"; \
-		exit 1; \
-	fi; \
-	rm -f "$$before" "$$after"
+	@tmp=$$(mktemp -d); \
+	CODEX_OUT="$$tmp/codex" CLAUDE_OUT="$$tmp/claude" ./scripts/generate.sh all; \
+	for f in $$(find "$$tmp" -name '*.json' -type f); do jq empty "$$f"; done; \
+	rm -rf "$$tmp"
 
 codex:
-	@for p in $$(jq -r '.plugins[]' marketplace/source.json); do \
-		mkdir -p $(CODEX_OUT)/plugins/$$p && \
-		rsync -a --delete  plugins/$$p/codex/  $(CODEX_OUT)/plugins/$$p/ ; \
-		rsync -a --delete plugins/$$p/skills/ $(CODEX_OUT)/plugins/$$p/skills/ ; \
-	done
-	cp marketplace/codex.json $(CODEX_OUT)/marketplace.json
+	CODEX_OUT="$(CODEX_OUT)" ./scripts/generate.sh codex
 
 claude:
-	@for p in $$(jq -r '.plugins[]' marketplace/source.json); do \
-		mkdir -p $(CLAUDE_OUT)/plugins/$$p && \
-		rsync -a --delete  plugins/$$p/claude/ $(CLAUDE_OUT)/plugins/$$p/ ; \
-		rsync -a --delete plugins/$$p/skills/  $(CLAUDE_OUT)/plugins/$$p/skills/ ; \
-	done
-	cp marketplace/claude.json $(CLAUDE_OUT)/marketplace.json
+	CLAUDE_OUT="$(CLAUDE_OUT)" ./scripts/generate.sh claude
 
 clean:
-	rm -rf $(CODEX_OUT) $(CLAUDE_OUT)
+	rm -rf .codex-marketplace .claude-marketplace

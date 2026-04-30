@@ -16,7 +16,7 @@
       "code-intelligence"
     ],
     "skills": "./skills/",
-    "mcpServers": "./mcp.json",
+    "mcpServers": "./.mcp.json",
     "interface": {
       "displayName": "Codanna",
       "developerName": "bartolli",

@@ -2,39 +2,26 @@
 set -eu
 
 command -v jq >/dev/null 2>&1 || {
-  echo "jq is required to generate plugin manifests." >&2
+  echo "jq is required to generate marketplace output." >&2
   exit 1
 }
 
-PLATFORMS="codex claude"
+TARGET=${1:-all}
+CODEX_OUT=${CODEX_OUT:-.codex-marketplace}
+CLAUDE_OUT=${CLAUDE_OUT:-.claude-marketplace}
 PLUGINS=$(jq -r '.plugins[]' marketplace/source.json)
 
-generate_marketplace() {
-  platform=$1
+case "$TARGET" in
+  all|codex|claude) ;;
+  *)
+    echo "Usage: $0 [all|codex|claude]" >&2
+    exit 2
+    ;;
+esac
 
-  jq --arg platform "$platform" '
-    . as $root
-    | $root.platforms[$platform]
-      + {
-        plugins: (
-          $root.plugins
-          | map(
-              {
-                name: .,
-                source: ($root.pluginDefaults.source + {path: ("./plugins/" + .)}),
-                policy: $root.pluginDefaults.policy,
-                category: $root.pluginDefaults.category
-              }
-            )
-        )
-      }
-  ' marketplace/source.json > "marketplace/$platform.json"
-}
-
-generate_plugin_manifest() {
+plugin_manifest() {
   plugin=$1
   platform=$2
-  mkdir -p "plugins/$plugin/$platform"
 
   jq --arg platform "$platform" '
     def compact_object:
@@ -74,27 +61,112 @@ generate_plugin_manifest() {
 
     .common * (.platforms[$platform] // {})
     | ordered_plugin
-  ' "plugins/$plugin/plugin.source.json" > "plugins/$plugin/$platform/plugin.json"
+  ' "plugins/$plugin/plugin.source.json"
 }
 
-generate_mcp_manifest() {
+mcp_manifest() {
   plugin=$1
   platform=$2
-  source="plugins/$plugin/mcp.source.json"
-
-  [ -f "$source" ] || return 0
-  mkdir -p "plugins/$plugin/$platform"
 
   jq --arg platform "$platform" '
     .common * (.platforms[$platform] // {})
-  ' "$source" > "plugins/$plugin/$platform/mcp.json"
+  ' "plugins/$plugin/mcp.source.json"
 }
 
-for platform in $PLATFORMS; do
-  generate_marketplace "$platform"
+copy_plugin_files() {
+  plugin=$1
+  platform=$2
+  out=$3
+  manifest_dir=$4
+
+  plugin_out="$out/plugins/$plugin"
+  rm -rf "$plugin_out"
+  mkdir -p "$plugin_out/$manifest_dir"
+
+  plugin_manifest "$plugin" "$platform" > "$plugin_out/$manifest_dir/plugin.json"
+
+  if [ -f "plugins/$plugin/mcp.source.json" ]; then
+    mcp_manifest "$plugin" "$platform" > "$plugin_out/.mcp.json"
+  fi
+
+  if [ -d "plugins/$plugin/skills" ]; then
+    mkdir -p "$plugin_out/skills"
+    rsync -a --delete "plugins/$plugin/skills/" "$plugin_out/skills/"
+  fi
+}
+
+generate_codex_marketplace() {
+  out=$1
+  mkdir -p "$out/.agents/plugins"
+  rm -rf "$out/plugins"
+
+  jq '
+    . as $root
+    | $root.platforms.codex
+      + {
+        plugins: (
+          $root.plugins
+          | map(
+              {
+                name: .,
+                source: ($root.pluginDefaults.source + {path: ("./plugins/" + .)}),
+                policy: $root.pluginDefaults.policy,
+                category: $root.pluginDefaults.category
+              }
+            )
+        )
+      }
+  ' marketplace/source.json > "$out/.agents/plugins/marketplace.json"
 
   for plugin in $PLUGINS; do
-    generate_plugin_manifest "$plugin" "$platform"
-    generate_mcp_manifest "$plugin" "$platform"
+    copy_plugin_files "$plugin" codex "$out" .codex-plugin
   done
-done
+}
+
+generate_claude_marketplace() {
+  out=$1
+  mkdir -p "$out/.claude-plugin"
+  rm -rf "$out/plugins"
+
+  entries='[]'
+  for plugin in $PLUGINS; do
+    entry=$(
+      jq --arg plugin "$plugin" '
+        .common * (.platforms.claude // {})
+        | {
+            name,
+            source: ("./plugins/" + $plugin),
+            description,
+            version,
+            author,
+            category: (.interface.category // "Developer Tools")
+          }
+      ' "plugins/$plugin/plugin.source.json"
+    )
+    entries=$(printf '%s\n%s\n' "$entries" "$entry" | jq -s '.[0] + [.[1]]')
+  done
+
+  jq --argjson plugins "$entries" '
+    .platforms.claude
+    | {
+        "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+        name,
+        version,
+        description,
+        owner,
+        plugins: $plugins
+      }
+  ' marketplace/source.json > "$out/.claude-plugin/marketplace.json"
+
+  for plugin in $PLUGINS; do
+    copy_plugin_files "$plugin" claude "$out" .claude-plugin
+  done
+}
+
+if [ "$TARGET" = all ] || [ "$TARGET" = codex ]; then
+  generate_codex_marketplace "$CODEX_OUT"
+fi
+
+if [ "$TARGET" = all ] || [ "$TARGET" = claude ]; then
+  generate_claude_marketplace "$CLAUDE_OUT"
+fi
