@@ -4,6 +4,9 @@ Source repository for Codex and Claude Code plugin marketplaces.
 
 This repo stores shared plugin sources. Generated marketplace repositories are written to output directories and are not tracked here.
 
+- [gomons/codex-marketplace](https://github.com/gomons/codex-marketplace)
+- [gomons/claude-marketplace](https://github.com/gomons/claude-marketplace)
+
 ## Plugins
 
 - `rtk`: installs Rust Token Killer.
