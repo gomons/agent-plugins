@@ -1,0 +1,57 @@
+name: Generate Marketplaces
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: agent-plugins
+
+      - uses: actions/checkout@v4
+        with:
+          repository: gomons/codex-marketplace
+          path: codex-marketplace
+          token: ${{ secrets.MARKETPLACE_TOKEN }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: gomons/claude-marketplace
+          path: claude-marketplace
+          token: ${{ secrets.MARKETPLACE_TOKEN }}
+
+      - name: Install dependencies
+        run: sudo apt-get install -y jq rsync
+
+      - name: Generate Codex marketplace
+        working-directory: agent-plugins
+        run: make codex CODEX_OUT=../codex-marketplace
+
+      - name: Generate Claude marketplace
+        working-directory: agent-plugins
+        run: make claude CLAUDE_OUT=../claude-marketplace
+
+      - name: Push Codex marketplace
+        working-directory: codex-marketplace
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Generate from agent-plugins@${{ github.sha }}"
+          git push
+
+      - name: Push Claude marketplace
+        working-directory: claude-marketplace
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet && echo "No changes" && exit 0
+          git commit -m "Generate from agent-plugins@${{ github.sha }}"
+          git push
