@@ -1,7 +1,7 @@
 {
   "name": "serena",
   "version": "0.1.0",
-  "description": "Connects the Serena MCP server to Claude Code.",
+  "description": "Serena MCP integration for Claude Code.",
   "author": {
     "name": "Siarhei Homan",
     "email": "gomons@gmail.com",
@@ -20,8 +20,8 @@
   "mcpServers": "./mcp.json",
   "interface": {
     "displayName": "Serena",
-    "shortDescription": "Semantic code tools for Claude Code via Serena MCP.",
-    "longDescription": "Starts the Serena MCP server in Claude Code-compatible mode so Claude Code can use Serena's semantic retrieval and editing tools.",
+    "shortDescription": "Semantic code tools via Serena MCP.",
+    "longDescription": "Starts Serena MCP for semantic code retrieval and editing.",
     "developerName": "Oraios",
     "category": "Developer Tools",
     "capabilities": [

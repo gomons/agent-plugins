@@ -1,7 +1,7 @@
 {
   "name": "codanna",
   "version": "0.1.0",
-  "description": "Local Codex wrapper for the official Codanna MCP server.",
+  "description": "Codanna MCP integration for Codex.",
   "author": {
     "name": "Siarhei Homan",
     "email": "gomons@gmail.com",
@@ -20,8 +20,8 @@
   "mcpServers": "./mcp.json",
   "interface": {
     "displayName": "Codanna",
-    "shortDescription": "Code intelligence for Codex via Codanna MCP.",
-    "longDescription": "Local Codex wrapper that starts the official Codanna MCP server so Codex can use semantic code search, relationship tracing, and indexed documentation retrieval.",
+    "shortDescription": "Code intelligence via Codanna MCP.",
+    "longDescription": "Starts Codanna MCP for semantic code search, relationship tracing, and indexed docs.",
     "developerName": "bartolli",
     "category": "Developer Tools",
     "capabilities": [

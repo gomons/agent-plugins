@@ -29,7 +29,7 @@ Use this skill when the current repository should be prepared for Codanna so the
    `test -d .codanna/index`
 7. Verify that semantic embeddings were built:
    `"$CODANNA_BIN" mcp get_index_info`
-   Check the `Semantic Search` section. If embeddings are still `0`, report that semantic search is not ready yet.
+   Check the code index and `Semantic Search` sections. If symbols, files, or embeddings are still `0`, report that Codanna exists but semantic search is not ready yet.
 8. Optionally run `"$CODANNA_BIN" mcp-test` to confirm the MCP tool surface is available.
 
 ## Notes
@@ -39,5 +39,5 @@ Use this skill when the current repository should be prepared for Codanna so the
 - Do not assume the user's shell already resolves `codanna`; prefer the resolved `CODANNA_BIN` path from the installation shell.
 - `codanna index .` should build both the symbol index and the semantic embedding index when the project contains supported, indexable content.
 - If `get_index_info` reports `Embeddings: 0`, do not claim semantic search is ready. Call out the reason when it is visible, for example an empty code index, missing model assets, or unsupported project content.
-- The Codanna launcher in this plugin will refuse to start when `.codanna/settings.toml` or a non-empty `.codanna/index/` is missing.
+- The Codanna launcher in this plugin will refuse to start when `.codanna/settings.toml`, `.codanna/index/`, or a useful non-empty code index is missing.
 - After this skill completes, the plugin launcher should be able to refresh the index and start MCP normally.

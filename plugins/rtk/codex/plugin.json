@@ -1,7 +1,7 @@
 {
   "name": "rtk",
   "version": "0.1.0",
-  "description": "Codex plugin for installing Rust Token Killer.",
+  "description": "Install Rust Token Killer for Codex.",
   "author": {
     "name": "Siarhei Homan",
     "email": "gomons@gmail.com",
@@ -19,8 +19,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "RTK",
-    "shortDescription": "Install RTK and initialize its Codex integration.",
-    "longDescription": "Installs the RTK CLI and runs the global Codex init step so Codex can use RTK for token reduction.",
+    "shortDescription": "Install RTK for Codex.",
+    "longDescription": "Installs RTK and initializes the global Codex integration.",
     "developerName": "rtk-ai",
     "category": "Developer Tools",
     "capabilities": [

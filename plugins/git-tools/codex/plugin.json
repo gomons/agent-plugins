@@ -7,12 +7,12 @@
     "email": "gomons@gmail.com",
     "url": ""
   },
-  "skills": "./skills/",
   "license": "MIT",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Git Tools",
-    "shortDescription": "Git helper skills for local workflows.",
-    "longDescription": "Provides small focused skills for local Git workflows, including creating worktrees from the current branch.",
+    "shortDescription": "Local Git helper skills.",
+    "longDescription": "Adds small Git workflow helpers, including worktree creation.",
     "developerName": "Siarhei Homan",
     "category": "Developer Tools",
     "capabilities": [

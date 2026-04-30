@@ -1,0 +1,69 @@
+{
+  "common": {
+    "name": "serena",
+    "version": "0.1.0",
+    "author": {
+      "name": "Siarhei Homan",
+      "email": "gomons@gmail.com",
+      "url": ""
+    },
+    "homepage": "https://oraios.github.io/serena/",
+    "repository": "https://github.com/oraios/serena",
+    "license": "MIT",
+    "keywords": [
+      "mcp",
+      "serena",
+      "code-intelligence"
+    ],
+    "skills": "./skills/",
+    "mcpServers": "./mcp.json",
+    "interface": {
+      "displayName": "Serena",
+      "developerName": "Oraios",
+      "category": "Developer Tools",
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "websiteURL": "https://oraios.github.io/serena/",
+      "privacyPolicyURL": "https://github.com/oraios/serena",
+      "termsOfServiceURL": "https://github.com/oraios/serena",
+      "defaultPrompt": [
+        "Install Serena if it is missing from this machine.",
+        "Activate Serena for the current project.",
+        "Use Serena to inspect code semantically.",
+        "Use Serena editing tools for targeted refactors."
+      ],
+      "brandColor": "#2563EB"
+    }
+  },
+  "platforms": {
+    "codex": {
+      "description": "Serena MCP integration for Codex.",
+      "keywords": [
+        "mcp",
+        "serena",
+        "codex",
+        "code-intelligence"
+      ],
+      "interface": {
+        "shortDescription": "Semantic code tools via Serena MCP.",
+        "longDescription": "Starts Serena MCP for semantic code retrieval and editing."
+      }
+    },
+    "claude": {
+      "description": "Serena MCP integration for Claude Code.",
+      "keywords": [
+        "mcp",
+        "serena",
+        "claude",
+        "code-intelligence"
+      ],
+      "interface": {
+        "shortDescription": "Semantic code tools via Serena MCP.",
+        "longDescription": "Starts Serena MCP for semantic code retrieval and editing."
+      }
+    }
+  }
+}

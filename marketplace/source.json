@@ -1,0 +1,32 @@
+{
+  "platforms": {
+    "codex": {
+      "name": "gomons-codex-plugins",
+      "interface": {
+        "displayName": "gomons-codex-plugins"
+      }
+    },
+    "claude": {
+      "name": "gomons-claude-plugins",
+      "interface": {
+        "displayName": "gomons-claude-plugins"
+      }
+    }
+  },
+  "plugins": [
+    "rtk",
+    "codanna",
+    "serena",
+    "git-tools"
+  ],
+  "pluginDefaults": {
+    "source": {
+      "source": "local"
+    },
+    "policy": {
+      "installation": "AVAILABLE",
+      "authentication": "NONE"
+    },
+    "category": "Developer Tools"
+  }
+}

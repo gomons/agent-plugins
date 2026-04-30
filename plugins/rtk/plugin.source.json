@@ -1,0 +1,68 @@
+{
+  "common": {
+    "name": "rtk",
+    "version": "0.1.0",
+    "author": {
+      "name": "Siarhei Homan",
+      "email": "gomons@gmail.com",
+      "url": ""
+    },
+    "homepage": "https://www.rtk-ai.app/",
+    "repository": "https://github.com/rtk-ai/rtk",
+    "license": "MIT",
+    "keywords": [
+      "rtk",
+      "rust-token-killer",
+      "cli"
+    ],
+    "skills": "./skills/",
+    "interface": {
+      "displayName": "RTK",
+      "developerName": "rtk-ai",
+      "category": "Developer Tools",
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "websiteURL": "https://www.rtk-ai.app/",
+      "privacyPolicyURL": "https://github.com/rtk-ai/rtk",
+      "termsOfServiceURL": "https://github.com/rtk-ai/rtk",
+      "brandColor": "#166534"
+    }
+  },
+  "platforms": {
+    "codex": {
+      "description": "Install Rust Token Killer for Codex.",
+      "keywords": [
+        "rtk",
+        "rust-token-killer",
+        "codex",
+        "cli"
+      ],
+      "interface": {
+        "shortDescription": "Install RTK for Codex.",
+        "longDescription": "Installs RTK and initializes the global Codex integration.",
+        "defaultPrompt": [
+          "Use the rtk-install skill to install RTK for Codex on this machine, run the global Codex init step `rtk init -g --codex`, and verify it with `rtk init -g --codex --show`."
+        ]
+      }
+    },
+    "claude": {
+      "description": "Install Rust Token Killer for Claude Code.",
+      "keywords": [
+        "rtk",
+        "rust-token-killer",
+        "claude",
+        "cli"
+      ],
+      "interface": {
+        "shortDescription": "Install RTK for Claude Code.",
+        "longDescription": "Installs RTK and initializes the global Claude Code integration.",
+        "defaultPrompt": [
+          "Use the rtk-install skill to install RTK for Claude Code on this machine, run the global init step `rtk init -g`, and verify that `~/.claude/RTK.md` was created."
+        ]
+      }
+    }
+  }
+}

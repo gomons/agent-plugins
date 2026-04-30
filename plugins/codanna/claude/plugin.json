@@ -1,7 +1,7 @@
 {
   "name": "codanna",
   "version": "0.1.0",
-  "description": "Claude Code plugin for the official Codanna MCP server.",
+  "description": "Codanna MCP integration for Claude Code.",
   "author": {
     "name": "Siarhei Homan",
     "email": "gomons@gmail.com",
@@ -20,8 +20,8 @@
   "mcpServers": "./mcp.json",
   "interface": {
     "displayName": "Codanna",
-    "shortDescription": "Code intelligence for Claude Code via Codanna MCP.",
-    "longDescription": "Starts the official Codanna MCP server so Claude Code can use semantic code search, relationship tracing, and indexed documentation retrieval.",
+    "shortDescription": "Code intelligence via Codanna MCP.",
+    "longDescription": "Starts Codanna MCP for semantic code search, relationship tracing, and indexed docs.",
     "developerName": "bartolli",
     "category": "Developer Tools",
     "capabilities": [

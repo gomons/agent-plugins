@@ -1,0 +1,18 @@
+{
+  "common": {
+    "mcpServers": {
+      "codanna": {
+        "command": "sh",
+        "args": [
+          "-lc",
+          "set -eu\nPATH=\"/opt/homebrew/bin:$HOME/.local/bin:$PATH\"\nPROJECT_DIR=$(pwd)\nPROJECT_SETTINGS=\"$PROJECT_DIR/.codanna/settings.toml\"\nPROJECT_INDEX_DIR=\"$PROJECT_DIR/.codanna/index\"\n\nif ! command -v codanna >/dev/null 2>&1; then\n  echo \"Codanna is not installed. Run the 'codanna-install' skill to install the global codanna CLI for this machine.\" >&2\n  exit 1\nfi\n\nif [ ! -f \"$PROJECT_SETTINGS\" ] || [ ! -d \"$PROJECT_INDEX_DIR\" ] || ! find \"$PROJECT_INDEX_DIR\" -mindepth 1 -print -quit 2>/dev/null | grep -q .; then\n  echo \"Codanna is not initialized for this project. Run the 'codanna-init' skill in $PROJECT_DIR to create .codanna and build the first index.\" >&2\n  exit 1\nfi\n\ncodanna index . >/dev/null\nINDEX_INFO=$(codanna mcp get_index_info 2>/dev/null || true)\nif printf '%s\\n' \"$INDEX_INFO\" | grep -Eq 'Symbols:[[:space:]]*0|Files:[[:space:]]*0|Embeddings:[[:space:]]*0'; then\n  echo \"Codanna index exists but semantic search is not ready yet. Run the 'codanna-init' skill and check 'codanna mcp get_index_info' before relying on semantic search.\" >&2\n  exit 1\nfi\n\nexec codanna serve --watch"
+        ],
+        "note": "Apple Silicon macOS stdio launcher. Finds global `codanna`, verifies the project index, refreshes it, then runs `codanna serve --watch`. Use `codanna-install` or `codanna-init` if setup is missing."
+      }
+    }
+  },
+  "platforms": {
+    "codex": {},
+    "claude": {}
+  }
+}
