@@ -12,7 +12,7 @@ Use this skill when Rust Token Killer should be installed or re-applied on the c
 1. From the skill directory, run:
    `./install_rtk.sh --target codex`   (when installing for Codex)
    `./install_rtk.sh --target claude`  (when installing for Claude Code)
-2. The install flow runs RTK's global init automatically:
+2. The script ensures the RTK binary is available, then runs RTK's global init:
    - Codex: `rtk init -g --codex`
    - Claude Code: `rtk init -g`
 3. Confirm the result:
@@ -26,4 +26,6 @@ Use this skill when Rust Token Killer should be installed or re-applied on the c
 - RTK integrates with each platform through files in the agent home directory, not through an MCP server.
 - Codex integration: `~/.codex/RTK.md` and `~/.codex/AGENTS.md`.
 - Claude Code integration: `~/.claude/RTK.md`.
-- Apple Silicon macOS-only; installs RTK through Homebrew by default, with `~/.local/bin` as a fallback.
+- The installer checks for available install tools instead of enforcing a specific OS or CPU.
+- RTK is installed through Homebrew when it is not already available.
+- Known binary locations include Homebrew prefixes and `~/.local/bin`.

@@ -18,6 +18,16 @@ resolve_rtk_bin() {
     return 0
   fi
 
+  if [[ -x "/usr/local/bin/rtk" ]]; then
+    printf '%s\n' "/usr/local/bin/rtk"
+    return 0
+  fi
+
+  if [[ -x "/home/linuxbrew/.linuxbrew/bin/rtk" ]]; then
+    printf '%s\n' "/home/linuxbrew/.linuxbrew/bin/rtk"
+    return 0
+  fi
+
   if [[ -x "$HOME/.local/bin/rtk" ]]; then
     printf '%s\n' "$HOME/.local/bin/rtk"
     return 0
@@ -27,22 +37,46 @@ resolve_rtk_bin() {
 }
 
 install_with_brew() {
-  if [[ "$(uname -s)" != "Darwin" ]]; then
-    echo "RTK install script only supports macOS." >&2
-    return 1
-  fi
-
-  if [[ "$(uname -m)" != "arm64" ]]; then
-    echo "RTK install script only supports Apple Silicon Macs." >&2
-    return 1
-  fi
-
   if ! command -v brew >/dev/null 2>&1; then
+    echo "Homebrew is not available; skipping Homebrew install." >&2
     return 1
   fi
 
   echo "Installing RTK with Homebrew..."
-  brew install rtk
+  if ! brew install rtk; then
+    echo "Homebrew failed to install RTK." >&2
+    return 1
+  fi
+}
+
+install_rtk() {
+  local method
+  local install_func
+  local methods=(
+    brew
+  )
+
+  if resolve_rtk_bin >/dev/null; then
+    return 0
+  fi
+
+  for method in "${methods[@]}"; do
+    install_func="install_with_${method}"
+
+    if ! declare -F "$install_func" >/dev/null; then
+      echo "Unknown RTK install method: $method" >&2
+      continue
+    fi
+
+    "$install_func" || continue
+
+    if resolve_rtk_bin >/dev/null; then
+      return 0
+    fi
+  done
+
+  echo "RTK is not installed and no install method succeeded." >&2
+  return 1
 }
 
 ensure_codex_integration() {
@@ -74,56 +108,53 @@ ensure_claude_integration() {
   fi
 }
 
-install_rtk() {
+initialize_codex() {
+  local rtk_bin="$1"
+
+  echo "Activating RTK for Codex..."
+  if ! "$rtk_bin" init -g --codex; then
+    echo "Failed to initialize RTK for Codex." >&2
+    return 1
+  fi
+
+  ensure_codex_integration
+  echo "Verified RTK init command:"
+  echo "  $rtk_bin init -g --codex --show"
+  "$rtk_bin" init -g --codex --show || true
+  echo "RTK Codex integration status:"
+  [[ -f "$HOME/.codex/RTK.md" ]]    && echo "  present: $HOME/.codex/RTK.md"    || echo "  missing: $HOME/.codex/RTK.md"
+  [[ -f "$HOME/.codex/AGENTS.md" ]] && echo "  present: $HOME/.codex/AGENTS.md" || echo "  missing: $HOME/.codex/AGENTS.md"
+}
+
+initialize_claude() {
+  local rtk_bin="$1"
+
+  echo "Activating RTK for Claude Code..."
+  if ! "$rtk_bin" init -g; then
+    echo "Failed to initialize RTK for Claude Code." >&2
+    return 1
+  fi
+
+  ensure_claude_integration
+  echo "RTK Claude Code integration status:"
+  [[ -f "$HOME/.claude/RTK.md" ]] && echo "  present: $HOME/.claude/RTK.md" || echo "  missing: $HOME/.claude/RTK.md"
+}
+
+initialize_rtk() {
   local target="$1"
   local rtk_bin
 
   if ! rtk_bin="$(resolve_rtk_bin)"; then
-    if [[ "$(uname -s)" != "Darwin" || "$(uname -m)" != "arm64" ]]; then
-      echo "RTK plugin support is limited to Apple Silicon macOS." >&2
-      exit 1
-    fi
-
-    if ! install_with_brew; then
-      echo "RTK is not installed and could not be installed with Homebrew." >&2
-      echo "Install it with 'brew install rtk' and try again." >&2
-      exit 1
-    fi
-
-    if ! rtk_bin="$(resolve_rtk_bin)"; then
-      echo "RTK installation ran, but the binary still could not be resolved in known locations." >&2
-      exit 1
-    fi
+    echo "RTK installation ran, but the binary still could not be resolved in known locations." >&2
+    return 1
   fi
 
   echo "Using RTK binary: $rtk_bin"
   "$rtk_bin" --version
 
   case "$target" in
-    codex)
-      echo "Activating RTK for Codex..."
-      if ! "$rtk_bin" init -g --codex; then
-        echo "Failed to initialize RTK for Codex." >&2
-        exit 1
-      fi
-      ensure_codex_integration
-      echo "Verified RTK init command:"
-      echo "  $rtk_bin init -g --codex --show"
-      "$rtk_bin" init -g --codex --show || true
-      echo "RTK Codex integration status:"
-      [[ -f "$HOME/.codex/RTK.md" ]]    && echo "  present: $HOME/.codex/RTK.md"    || echo "  missing: $HOME/.codex/RTK.md"
-      [[ -f "$HOME/.codex/AGENTS.md" ]] && echo "  present: $HOME/.codex/AGENTS.md" || echo "  missing: $HOME/.codex/AGENTS.md"
-      ;;
-    claude)
-      echo "Activating RTK for Claude Code..."
-      if ! "$rtk_bin" init -g; then
-        echo "Failed to initialize RTK for Claude Code." >&2
-        exit 1
-      fi
-      ensure_claude_integration
-      echo "RTK Claude Code integration status:"
-      [[ -f "$HOME/.claude/RTK.md" ]] && echo "  present: $HOME/.claude/RTK.md" || echo "  missing: $HOME/.claude/RTK.md"
-      ;;
+    codex) initialize_codex "$rtk_bin" ;;
+    claude) initialize_claude "$rtk_bin" ;;
   esac
 }
 
@@ -148,7 +179,11 @@ main() {
     *) usage ;;
   esac
 
-  install_rtk "$target"
+  if ! install_rtk; then
+    exit 1
+  fi
+
+  initialize_rtk "$target"
 }
 
 main "$@"
