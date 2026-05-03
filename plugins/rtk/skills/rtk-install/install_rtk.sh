@@ -23,11 +23,6 @@ resolve_rtk_bin() {
     return 0
   fi
 
-  if [[ -x "/home/linuxbrew/.linuxbrew/bin/rtk" ]]; then
-    printf '%s\n' "/home/linuxbrew/.linuxbrew/bin/rtk"
-    return 0
-  fi
-
   if [[ -x "$HOME/.local/bin/rtk" ]]; then
     printf '%s\n' "$HOME/.local/bin/rtk"
     return 0

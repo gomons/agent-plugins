@@ -26,6 +26,3 @@ Use this skill when Rust Token Killer should be installed or re-applied on the c
 - RTK integrates with each platform through files in the agent home directory, not through an MCP server.
 - Codex integration: `~/.codex/RTK.md` and `~/.codex/AGENTS.md`.
 - Claude Code integration: `~/.claude/RTK.md`.
-- The installer checks for available install tools instead of enforcing a specific OS or CPU.
-- RTK is installed through Homebrew when it is not already available.
-- Known binary locations include Homebrew prefixes and `~/.local/bin`.
