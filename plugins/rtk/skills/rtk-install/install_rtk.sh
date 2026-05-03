@@ -51,10 +51,6 @@ install_rtk() {
     brew
   )
 
-  if resolve_rtk_bin >/dev/null; then
-    return 0
-  fi
-
   for method in "${methods[@]}"; do
     install_func="install_with_${method}"
 
@@ -63,15 +59,20 @@ install_rtk() {
       continue
     fi
 
-    "$install_func" || continue
-
-    if resolve_rtk_bin >/dev/null; then
+    if "$install_func"; then
       return 0
     fi
   done
 
-  echo "RTK is not installed and no install method succeeded." >&2
+  echo "RTK binary is not available and no install method succeeded." >&2
   return 1
+}
+
+verify_rtk() {
+  local rtk_bin="$1"
+
+  echo "Using RTK binary: $rtk_bin"
+  "$rtk_bin" --version
 }
 
 ensure_codex_integration() {
@@ -137,24 +138,20 @@ initialize_claude() {
 
 initialize_rtk() {
   local target="$1"
-  local rtk_bin
+  local rtk_bin="$2"
+  local init_func="initialize_${target}"
 
-  if ! rtk_bin="$(resolve_rtk_bin)"; then
-    echo "RTK installation ran, but the binary still could not be resolved in known locations." >&2
+  if ! declare -F "$init_func" >/dev/null; then
+    echo "Unknown RTK initialization target: $target" >&2
     return 1
   fi
 
-  echo "Using RTK binary: $rtk_bin"
-  "$rtk_bin" --version
-
-  case "$target" in
-    codex) initialize_codex "$rtk_bin" ;;
-    claude) initialize_claude "$rtk_bin" ;;
-  esac
+  "$init_func" "$rtk_bin"
 }
 
 main() {
   local target=""
+  local rtk_bin
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -174,11 +171,22 @@ main() {
     *) usage ;;
   esac
 
-  if ! install_rtk; then
+  if ! rtk_bin="$(resolve_rtk_bin)"; then
+    if ! install_rtk; then
+      exit 1
+    fi
+
+    if ! rtk_bin="$(resolve_rtk_bin)"; then
+      echo "RTK binary could not be found in PATH or known locations." >&2
+      exit 1
+    fi
+  fi
+
+  if ! verify_rtk "$rtk_bin"; then
     exit 1
   fi
 
-  initialize_rtk "$target"
+  initialize_rtk "$target" "$rtk_bin"
 }
 
 main "$@"
