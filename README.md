@@ -13,6 +13,7 @@ This repo stores shared plugin sources. Generated marketplace repositories are w
 - `codanna`: exposes Codanna MCP.
 - `serena`: exposes Serena MCP.
 - `git-tools`: local Git workflow skills.
+- `xquik`: connects Xquik MCP for X data and gated actions.
 
 ## Requirements
 
@@ -24,7 +25,7 @@ This repo stores shared plugin sources. Generated marketplace repositories are w
 
 ## Source Layout
 
-- `marketplace/source.json`: shared marketplace metadata and plugin list.
+- `marketplace/source.json`: marketplace metadata, plugins, and policy overrides.
 - `plugins/<plugin>/plugin.source.json`: shared plugin manifest source.
 - `plugins/<plugin>/mcp.source.json`: MCP config source, when needed.
 - `plugins/<plugin>/skills/`: shipped skills.
@@ -60,6 +61,7 @@ Claude Code output:
 | `make codex` | Validate sources and generate Codex output. |
 | `make claude` | Validate sources and generate Claude Code output. |
 | `make all` | Run both `codex` and `claude`. |
+| `make test` | Run generator regression tests. |
 | `make clean` | Remove local default outputs only. |
 
 Generate into external marketplace repositories:
