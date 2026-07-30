@@ -1,0 +1,72 @@
+{
+  "common": {
+    "name": "xquik",
+    "version": "2.6.0",
+    "description": "Xquik remote MCP for X data and confirmation-gated actions. Not affiliated with X Corp.",
+    "author": {
+      "name": "Xquik",
+      "url": "https://github.com/Xquik-dev"
+    },
+    "homepage": "https://docs.xquik.com/mcp/overview",
+    "repository": "https://github.com/Xquik-dev/x-twitter-scraper",
+    "license": "MIT",
+    "keywords": [
+      "xquik",
+      "mcp",
+      "x-data",
+      "social-listening",
+      "monitoring"
+    ],
+    "skills": "./skills/",
+    "mcpServers": "./.mcp.json",
+    "interface": {
+      "displayName": "Xquik",
+      "developerName": "Xquik",
+      "category": "Developer Tools",
+      "capabilities": [
+        "Interactive",
+        "Read",
+        "Write"
+      ],
+      "websiteURL": "https://docs.xquik.com/mcp/overview",
+      "privacyPolicyURL": "https://xquik.com/privacy",
+      "termsOfServiceURL": "https://xquik.com/terms",
+      "defaultPrompt": [
+        "Search public X posts with Xquik.",
+        "Research an X account with Xquik.",
+        "Prepare an approval-gated X action."
+      ],
+      "brandColor": "#111827"
+    }
+  },
+  "platforms": {
+    "codex": {
+      "description": "Xquik remote MCP and safe X workflow guidance for Codex.",
+      "keywords": [
+        "xquik",
+        "mcp",
+        "codex",
+        "x-data",
+        "social-listening"
+      ],
+      "interface": {
+        "shortDescription": "Use Xquik MCP for X data and gated actions.",
+        "longDescription": "Connects Codex to Xquik MCP for route discovery and bounded X data reads. Keeps actions behind explicit approval. Not affiliated with X Corp."
+      }
+    },
+    "claude": {
+      "description": "Xquik remote MCP and safe X workflow guidance for Claude Code.",
+      "keywords": [
+        "xquik",
+        "mcp",
+        "claude",
+        "x-data",
+        "social-listening"
+      ],
+      "interface": {
+        "shortDescription": "Use Xquik MCP for X data and gated actions.",
+        "longDescription": "Connects Claude Code to Xquik MCP for route discovery and bounded X data reads. Keeps actions behind explicit approval. Not affiliated with X Corp."
+      }
+    }
+  }
+}

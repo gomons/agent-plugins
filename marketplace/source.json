@@ -20,8 +20,16 @@
     "rtk",
     "codanna",
     "serena",
-    "git-tools"
+    "git-tools",
+    "xquik"
   ],
+  "pluginOverrides": {
+    "xquik": {
+      "policy": {
+        "authentication": "ON_USE"
+      }
+    }
+  },
   "pluginDefaults": {
     "source": {
       "source": "local"

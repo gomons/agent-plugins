@@ -9,15 +9,123 @@ command -v jq >/dev/null 2>&1 || {
 TARGET=${1:-all}
 CODEX_OUT=${CODEX_OUT:-.codex-marketplace}
 CLAUDE_OUT=${CLAUDE_OUT:-.claude-marketplace}
-PLUGINS=$(jq -r '.plugins[]' marketplace/source.json)
+PLUGINS=
+REPOSITORY_ROOT=$(pwd -P)
+SOURCE_PLUGINS_ROOT="$REPOSITORY_ROOT/plugins"
+
+normalize_absolute_path() {
+  awk -v path="$1" '
+    BEGIN {
+      count = split(path, parts, "/")
+      depth = 0
+      for (i = 1; i <= count; i++) {
+        part = parts[i]
+        if (part == "" || part == ".") {
+          continue
+        }
+        if (part == "..") {
+          if (depth > 0) {
+            depth--
+          }
+          continue
+        }
+        stack[++depth] = part
+      }
+
+      printf "/"
+      for (i = 1; i <= depth; i++) {
+        printf "%s%s", (i == 1 ? "" : "/"), stack[i]
+      }
+      printf "\n"
+    }
+  '
+}
+
+canonical_path() {
+  candidate=$1
+  case "$candidate" in
+    /*) ;;
+    *) candidate="$REPOSITORY_ROOT/$candidate" ;;
+  esac
+
+  existing=$candidate
+  suffix=
+  while [ ! -e "$existing" ]; do
+    leaf=${existing##*/}
+    suffix="/$leaf$suffix"
+    parent=${existing%/*}
+    [ -n "$parent" ] || parent=/
+    [ "$parent" != "$existing" ] || break
+    existing=$parent
+  done
+
+  if [ -d "$existing" ]; then
+    existing=$(CDPATH='' cd "$existing" && pwd -P)
+  else
+    leaf=${existing##*/}
+    parent=${existing%/*}
+    [ -n "$parent" ] || parent=/
+    existing=$(CDPATH='' cd "$parent" && printf '%s/%s\n' "$(pwd -P)" "$leaf")
+  fi
+
+  normalize_absolute_path "$existing$suffix"
+}
+
+validate_output_path() {
+  label=$1
+  output=$2
+  canonical_output=$(canonical_path "$output")
+
+  case "$canonical_output" in
+    "$REPOSITORY_ROOT" | "$SOURCE_PLUGINS_ROOT" | "$SOURCE_PLUGINS_ROOT"/*)
+      echo "Refusing unsafe $label output path: $output overlaps repository sources." >&2
+      exit 2
+      ;;
+  esac
+}
+
+validate_plugin_sources() {
+  if ! jq -e '
+    .plugins as $plugins
+    | ($plugins | type == "array" and length > 0)
+      and all(
+        $plugins[];
+        type == "string"
+        and length <= 64
+        and test("^[a-z0-9]+(-[a-z0-9]+)*$")
+      )
+      and (($plugins | length) == ($plugins | unique | length))
+  ' marketplace/source.json >/dev/null; then
+    echo "Plugin names must be unique lowercase hyphen-case values of 64 characters or fewer." >&2
+    exit 2
+  fi
+
+  PLUGINS=$(jq -r '.plugins[]' marketplace/source.json)
+  for plugin in $PLUGINS; do
+    if [ ! -f "plugins/$plugin/plugin.source.json" ]; then
+      echo "Missing plugin source manifest: plugins/$plugin/plugin.source.json" >&2
+      exit 2
+    fi
+  done
+}
 
 case "$TARGET" in
-  all|codex|claude) ;;
+  all | codex | claude) ;;
   *)
     echo "Usage: $0 [all|codex|claude]" >&2
     exit 2
     ;;
 esac
+
+validate_plugin_sources
+
+if [ "$TARGET" = all ] || [ "$TARGET" = codex ]; then
+  validate_output_path "Codex" "$CODEX_OUT"
+fi
+
+if [ "$TARGET" = all ] || [ "$TARGET" = claude ]; then
+  validate_output_path "Claude" "$CLAUDE_OUT"
+fi
 
 plugin_manifest() {
   plugin=$1
@@ -109,11 +217,19 @@ generate_codex_marketplace() {
         plugins: (
           $root.plugins
           | map(
+              . as $plugin
+              |
               {
-                name: .,
-                source: ($root.pluginDefaults.source + {path: ("./plugins/" + .)}),
-                policy: $root.pluginDefaults.policy,
-                category: $root.pluginDefaults.category
+                name: $plugin,
+                source: ($root.pluginDefaults.source + {path: ("./plugins/" + $plugin)}),
+                policy: (
+                  $root.pluginDefaults.policy
+                  * ($root.pluginOverrides[$plugin].policy // {})
+                ),
+                category: (
+                  $root.pluginOverrides[$plugin].category
+                  // $root.pluginDefaults.category
+                )
               }
             )
         )

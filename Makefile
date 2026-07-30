@@ -3,7 +3,7 @@ CLAUDE_OUT := .claude-marketplace
 JSON_FILES := $(shell find marketplace plugins -name '*.json' -type f)
 SH_FILES   := $(shell find scripts plugins -name '*.sh' -type f)
 
-.PHONY: all codex claude clean _check
+.PHONY: all codex claude clean test _check
 
 all: codex claude
 
@@ -25,6 +25,9 @@ claude: _check
 	@for f in $$(find "$(CLAUDE_OUT)" -name 'plugin.json' -type f); do \
 	  jq -e '.name and .version and .description and .skills' "$$f" >/dev/null; \
 	done
+
+test: _check
+	./scripts/test-generate.sh
 
 clean:
 	rm -rf .codex-marketplace .claude-marketplace
